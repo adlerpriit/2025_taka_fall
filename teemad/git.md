@@ -175,3 +175,9 @@ git push
 - **Commiti sõnumid**: Kasuta selgeid ja lühikesi sõnumeid, mis kirjeldavad tehtud muudatusi.
 - **Regulaarne pushimine**: Hoia oma kaugrepositoorium ajakohasena, et vältida konflikte.
 - **Konfliktide lahendamine**: Kui kaks inimest muudavad sama faili, võib tekkida konflikt. Lahenda need enne pushimist.
+
+## Lisamaterjalid
+- [Pro Git raamat (inglise keeles)](https://git-scm.com/book/en/v2)
+- [GitHub Docs](https://docs.github.com/en/get-started)
+- [VS Code Git juhend](https://code.visualstudio.com/docs/editor/versioncontrol)
+- [Git Cheat Sheet](https://education.github.com/git-cheat-sheet-education.pdf)
