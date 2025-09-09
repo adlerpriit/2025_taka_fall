@@ -181,3 +181,4 @@ git push
 - [GitHub Docs](https://docs.github.com/en/get-started)
 - [VS Code Git juhend](https://code.visualstudio.com/docs/editor/versioncontrol)
 - [Git Cheat Sheet](https://education.github.com/git-cheat-sheet-education.pdf)
+- [Write A README](https://www.makeareadme.com/)
