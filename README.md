@@ -6,3 +6,4 @@ Kursuse käigus tutvustame ka relatsiooniliste andmebaaside loogikat ja SQL pär
 
 
 1. [Giti ja versioonihalduse kasutamine](teemad/git.md)
+2. [Python ja Jupyter](teemad/python)
