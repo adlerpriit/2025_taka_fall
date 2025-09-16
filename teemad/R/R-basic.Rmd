@@ -1,0 +1,543 @@
+---
+title: "Introduction to R"
+author: "Priit Adler & Nurlan Kerimov"
+date: "2025-09-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction to Rstudio UI
+
+You can find this and the data files from ELIXIREstonia github. <https://github.com/ELIXIREstonia/2025-09-01-R-basic>.
+
+RStudio is an integrated development environment (IDE) tailored for efficient and user-friendly R programming. Once launched, the RStudio UI presents itself in a segmented manner, primarily divided into four main panes.
+
+-   Text editor
+
+-   Console / Terminal / etc...
+
+-   Environment / History / Connections / Git
+
+-   Files / **Plots** / Packages / **Help** / etc...
+
+see: <https://rstudio.github.io/cheatsheets/html/rstudio-ide.html> for more detailed overview.
+
+## Introduction to R
+
+R is a popular open-source programming language and environment for statistical computing and graphics. In this section, we will cover basic R syntax, functions, data structures, and data manipulation using the tidyverse.
+
+You can find this and the data files from ELIXIREstonia github. `https://github.com/ELIXIREstonia/2025-09-01-R-basic`.
+
+There is follow up course on R and ggplot2 <https://github.com/ELIXIREstonia/2024-10-09-R-visualisation> that is meant as logical continuation after you have finished this document.
+
+### R Syntax and Basic Functions
+
+```{r}
+# Arithmetic operations
+2 + 3
+4 * 5
+6 / 2 + 5 * 3
+```
+
+```{r}
+# Variables 
+x <- 10
+y <- 20
+x + y
+
+# is (x <- 10) same with (x = 10)
+```
+
+```{r}
+# Functions
+mean(c(1, 2, 3, 4, 5))
+max(c(1, 2, 3, 4, 5))
+# remember the 'c()'- concatenate function 
+
+# function with named arguments
+my_sum <- function(a, b=NULL) {
+  return(a + b)
+}
+my_sum(5, 7)
+```
+
+### Task: **Budgeting for a Party**
+
+You're planning a party and need to budget for it. Here's the cost breakdown *(assign value)*:
+
+1.  Venue rental: \$100
+
+2.  Food per person: \$15
+
+3.  Drinks per person: \$5
+
+4.  Entertainment: \$50
+
+Use the arithmetic operations you've learned to answer the following *(arithmetic operations with variables)*:
+
+1.  If you're inviting 10 people, how much will the food cost?
+
+2.  If you're inviting 10 people, how much will the drinks cost?
+
+3.  What's the total cost for a party with 10 attendees?
+
+Now, create variables for each of the costs *(assign the formula, i.e.* `y <- a + b`*)*:
+
+-   **`venue_cost`** for the venue rental
+
+-   **`food_cost_per_person`** for food per person
+
+-   **`drink_cost_per_person`** for drinks per person
+
+-   **`entertainment_cost`** for entertainment
+
+-   **`number_of_people`** for the number of attendees
+
+Calculate the total cost using these variables.
+
+Lastly, write a function named **`total_party_cost`** that takes in the number of attendees and returns the total cost. Test your function with different numbers of attendees to see how the cost changes.
+
+Hint: Your function will have to take into account all the costs: venue, food, drinks, and entertainment.
+
+```{r}
+
+
+
+```
+
+### Data Structures in R
+
+R has several data structures for organizing and storing data. Understanding these data structures is essential for effective data manipulation and analysis.
+
+1.  **Vectors**: A one-dimensional array of elements, all of the same data type. Vectors are commonly used for performing arithmetic operations and storing sequences of values.
+
+```{r}
+v <- c(1, 2, 3, 4, 5)
+print(v)
+
+# mixed_v = c(1, "apple", TRUE)
+# print(mixed_v)
+```
+
+2.  **Matrices**: A two-dimensional array of elements, organized in rows and columns, and all of the same data type. Matrices are useful for linear algebra operations and storing tabular data with a fixed number of rows and columns.
+
+```{r}
+m <- matrix(1:9, nrow = 3, ncol = 3)
+print(m)
+```
+
+3.  **Data frames**: A two-dimensional table where each column can have a different data type. Data frames are the most common data structure for storing and manipulating tabular data in R, especially for statistical analysis.
+
+```{r}
+df <- data.frame(
+  name = c("Alice", "Bob", "Charlie"),
+  age = c(25, 30, 35),
+  city = c("New York", "San Francisco", "Los Angeles")
+)
+print(df)
+```
+
+4.  **Lists**: A versatile data structure that can store elements of different data types and structures, including vectors, matrices, data frames and other lists. Lists are useful for organizing and storing hierarchical or nested data.
+
+```{r}
+l <- list(
+  name = "Alice",
+  age = c(25, 30),
+  city = c("New York", "San Francisco", "Los Angeles")
+)
+print(l)
+```
+
+Each data structure has its strengths and applications, and choosing the right one depends on the specific needs of your data manipulation and analysis tasks.
+
+### **Task: Organizing Student Data**
+
+You have been given data about students from three different classes: Biology, Chemistry, and Physics. For each student, you have their name, age, and score.
+
+1.  **Vectors**: Create three vectors representing the names, ages, and scores of students from the Biology class:
+
+    Names: "Anna", "Mike", "Luis"
+
+    Ages: 20, 21, 19
+
+    Scores: 85, 78, 90
+
+2.  **Matrices**: Assume that the ages and scores of students from all three classes (Biology, Chemistry, Physics) are as follows *(check help on* `matrix`*)*:
+
+    Ages: 20, 21, 19, 22, 20, 23, 24, 22, 25
+
+    Scores: 85, 78, 90, 88, 76, 95, 87, 80, 92
+
+    Create a matrix that has ages in the first column and scores in the second column. The first three rows should represent Biology students, the next three Chemistry, and the last three Physics.
+
+3.  **Data frames**: Create a data frame that has four columns: name, age, score, and class. Use the above data and add the following:
+
+    Names: "Anna", "Mike", "Luis", "Sam", "Ella", "Ravi", "Mia", "Jack", "Olivia"
+
+    Classes: "Biology", "Biology", "Biology", "Chemistry", "Chemistry", "Chemistry", "Physics", "Physics", "Physics"
+
+4.  **Lists**: Create a list for a student named "Anna" that includes separate vectors for her name, age, score, and class.
+
+5.  **Analysis**:
+
+    -   Using the data frame, filter out all students who scored above 85 and print their names and classes.
+
+    -   Using the matrix, calculate the average score of students from each class.
+
+```{r}
+# 1. Vectors for Biology class
+```
+
+```{r}
+# 2. Matrix of ages and scores
+```
+
+```{r}
+# 3. Data frame of all students
+```
+
+```{r}
+# 4. List for Anna
+
+```
+
+```{r}
+# 5. Analysis
+# - Students with scores > 85
+```
+
+```{r}
+# - Average score per class from the matrix
+```
+
+## Loading the Tidyverse
+
+```{r message=FALSE}
+# Install tidyverse if not already installed
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+
+# Load the tidyverse
+library(tidyverse)
+```
+
+## Reading Data from a File
+
+R supports a wide variety of file formats for reading and writing data. Some common formats include:
+
+-   CSV (Comma-Separated Values)
+-   TSV (Tab-Separated Values)
+-   Excel (XLS, XLSX)
+-   .. and few others
+
+The `tidyverse` packages, such as `readr` and `readxl`, provide functions for reading data from many of these formats. In this workshop, we'll focus on reading data from CSV, TSV.
+
+### Reading CSV Data
+
+```{r eval=FALSE}
+# Read data from a CSV file
+
+data_csv <- read_csv("data/Islander_data.csv")
+
+# Display the first few rows of the data
+data_csv
+```
+
+### Reading TSV Data
+
+Remove `#` from second and last row to run example
+
+```{r}
+# Read data from a TSV file
+# data_tsv <- read_tsv("data/Islander_data.tsv")
+
+# Display the first few rows of the data
+# head(data_tsv)
+```
+
+### Reading Excel Data
+
+```{r eval=FALSE}
+# Install readxl package if not already installed
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  install.packages("readxl")
+}
+
+# Load the readxl package
+library(readxl)
+```
+
+Remove `#` from second and last row to run example
+
+```{r}
+# Read data from an Excel file (pay attention to ::, why is it there?)
+data_excel <- readxl::read_excel("data/Islander_data.xlsx", sheet = "Sheet1")
+
+# Display the first few rows of the data
+head(data_excel)
+```
+
+For the Excel file, you'll need to remember to specify the correct sheet name using the `sheet` parameter in the `read_excel()` function.
+
+### Task:
+
+Find `Help` panel from the right hand side and search `read_tsv` function. How many different command line arguments does `read_tsv` have defined?
+
+## High-Level Overview of the Data with Tidyverse Pipes
+
+Tidyverse pipes, represented by the `%>%` \<ctrl+shift+M\> symbol, allow you to chain together multiple functions in a clear and readable manner. Pipes take the output of one function and use it as the input for the next function, making it easy to follow the sequence of data transformations.
+
+
+```{r include=FALSE}
+# Create a dummy dataset
+set.seed(42)
+data <- tibble(
+  YourCategory = factor(sample(LETTERS[1:5], 100, replace = TRUE)),
+  YourVariable = rnorm(100, mean = 50, sd = 10),
+  YourOtherVariable = rnorm(100, mean = 20, sd = 2)
+)
+head(data)
+```
+
+### Key dplyr functions
+
+Here are some of the most common and useful functions from the `dplyr` package. We will use the `data` dataframe we just created to illustrate them.
+
+#### `filter()` - Keep rows that satisfy a condition
+
+`filter()` allows you to subset a data frame, retaining rows that match your criteria.
+
+```{r}
+# Keep only the rows where YourCategory is "A"
+data %>% 
+  filter(YourCategory == "A") %>%
+  head(n=10)
+```
+
+#### `mutate()` - Add new variables
+
+`mutate()` adds new columns that are functions of existing columns. It can also be used to modify existing columns.
+
+```{r}
+# Create a new column 'YourVariable_plus_100'
+data %>%
+  mutate(YourVariable_plus_100 = YourVariable + 100) %>%
+  head()
+```
+
+#### `select()` - Pick columns by name
+
+`select()` allows you to choose specific columns from a data frame.
+
+```{r}
+# Select only the YourCategory and YourVariable columns
+data %>%
+  select(YourCategory, YourVariable) %>%
+  head()
+```
+
+#### `arrange()` - Reorder rows
+
+`arrange()` works similarly to `filter()` except that instead of selecting rows, it changes their order.
+
+```{r}
+# Arrange the data by YourVariable in ascending order
+data %>%
+  arrange(YourVariable) %>%
+  head()
+
+# Arrange in descending order
+data %>%
+  arrange(desc(YourVariable)) %>%
+  head()
+```
+
+#### `rename()` - Rename columns
+
+`rename()` is used to change the names of columns. The syntax is `new_name = old_name`.
+
+```{r}
+# Rename YourCategory to Category
+data %>%
+  rename(Category = YourCategory) %>%
+  head()
+```
+
+#### `group_by()` and `summarize()` - Working with grouped data
+In the following example, we'll use pipes to perform a series of operations on our dataset: 1. Group the data by a specific category (`group_by`) 2. Calculate summary statistics for each group (`summarize`) 3. Sort the resulting summary by a specific statistic (`arrange`)
+
+The `group_by()` function is used to group a data frame by one or more variables. When you group a data frame, any subsequent operations you perform will be done on a per-group basis. This is incredibly powerful when combined with `summarize()`.
+
+The `summarize()` function collapses a data frame to a single row of summary statistics. When used on a grouped data frame, it will compute the summary statistics for each group.
+
+Let's see an example where we calculate the mean of `YourVariable` and the count of observations for each `YourCategory`.
+
+```{r}
+# Summarize the data
+data_summary <- data %>% 
+  group_by(YourCategory) %>%
+  summarize(
+    mean_value = mean(YourVariable, na.rm = TRUE),
+    n = n()
+  ) %>%
+  arrange(desc(mean_value))
+
+head(data_summary)
+```
+
+In the above code, replace `YourCategory` and `YourVariable` with the appropriate column names from your dataset. This will give a high-level overview of the data, summarizing it by the specified category and calculating the mean of the specified variable. The use of pipes makes it easy to understand the sequence of transformations applied to the data.
+
+```{r}
+# New column using mutate and case_when statement
+# note that we are overwriting (updating) the original data
+data <- data %>%
+  mutate(
+    HalfOfOtherVariabel = YourOtherVariable / 2, # we can add another column based on existing columns
+    YourGroup = case_when(
+      YourCategory %in% c("A", "B") ~ "Group 1", # combine A and B into Group 1
+      YourCategory %in% c("C", "D") ~ "Group 2", # combine C and D into Group 2
+      TRUE ~ "Other"                             # case_when needs fallback default value, 
+                                                 # if none of the above match
+    ),
+    NewVariable = case_when(
+      YourVariable > 60 ~ YourVariable * 2,  # Double values above 60
+      YourVariable < 40 ~ YourVariable / 2,  # Halve values below 40
+      TRUE ~ YourVariable                    # Keep as is otherwise
+    )
+  )
+head(data)
+```
+
+### Reshaping data with `pivot_wider()` and `pivot_longer()`
+
+Data reshaping is a common task in data analysis. `tidyr`, another package in the `tidyverse`, provides two powerful functions for this: `pivot_longer()` and `pivot_wider()`. These functions allow you to change the layout of your data between "long" and "wide" formats.
+
+
+```{r}
+# We will use dataset fish_encounters
+fish_encounters
+```
+
+#### `pivot_wider()` - From Long to Wide
+`pivot_wider()` makes data "wider" by increasing the number of columns and decreasing the number of rows. It's useful when you have an observation scattered across multiple rows.
+
+In the `fish_encounters` example, we have observations for different fish at various stations. We can make this data wider by creating a separate column for each station. The `names_from = station` argument tells `pivot_wider` to get the new column names from the `station` column, and `values_from = seen` tells it to fill the new columns with the values from the `seen` column.
+```{r}
+fish_encounters %>%
+  pivot_wider(names_from = station, values_from = seen)
+```
+
+Notice the `NA` values in the result. This is because not every fish was seen at every station. We can replace `NA` with 0 using the `values_fill` argument.  
+
+```{r}
+fish_encounters %>%
+  pivot_wider(names_from = station, values_from = seen, values_fill = 0)
+```
+
+##### go to https://tidyr.tidyverse.org/reference/pivot_wider.html for more info
+
+
+#### `pivot_longer()` - From Wide to Long
+
+`pivot_longer()` makes data "longer" by increasing the number of rows and decreasing the number of columns. It's useful when you have observations in separate columns that you want to gather into key-value pairs.
+
+```{r}
+# we will be using wide dataset called relig_income
+relig_income
+```
+
+The `relig_income` dataset has income brackets as column names. We can pivot all columns except `religion` into a longer format. The `!religion` syntax is a shortcut to select all columns other than `religion`. The `names_to = "income"` argument creates a new column named "income" to store the column names (the income brackets), and `values_to = "count"` creates a new column named "count" to store the cell values.
+
+```{r}
+relig_income %>%
+  pivot_longer(!religion, names_to = "income", values_to = "count")
+
+# see https://tidyr.tidyverse.org/reference/pivot_longer.html for more info
+```
+
+
+
+
+### Task:
+
+**Task: Analyzing Effects of Drugs on Memory**
+
+Using the "Memory Test on Drugged Islanders Data" dataset, your task is to analyze the effects of the different drugs and their dosages on memory recall.
+
+1.  **Data Exploration**:
+
+    -   Display the first 10 rows of the dataset.
+
+    -   Calculate the overall average of memory scores before and after the drug was administered.
+
+2.  **Drug Analysis**:
+
+    -   Using tidyverse pipes and the provided example as a reference, group the data by the **`Drug`** column.
+
+    -   For each drug, calculate:
+
+        1.  The average **`Diff`** in memory scores.
+
+        2.  The total number of participants that took that drug (**`n()`**).
+
+    -   Sort the results based on the average **`Diff`** in descending order.
+
+3.  **Dosage Analysis**:
+
+    -   Group the data by both **`Drug`** and **`dosage`**.
+
+    -   For each drug and dosage combination, calculate the average **`Diff`** in memory scores.
+
+    -   Display the results, sorting first by **`Drug`** and then by the average **`Diff`** in descending order.
+
+4.  **Age Group Analysis**:
+
+    -   Create a new column in the dataset called **`age_group`**. Categorize participants as "Young" if they are below 30, "Middle-aged" if they are between 30 and 50, and "Senior" if they are above 50. (*hint:* `case_when`)
+
+    -   Group the data by **`age_group`** and **`Drug`**.
+
+    -   Calculate the average **`Diff`** in memory scores for each age group and drug combination.
+
+    -   Display the results, and try to infer if age has any impact on the drug's effectiveness.
+
+5.  **Happy/Sad Group Analysis**:
+
+    -   Group the data based on the **`happy/sad group`** column.
+
+    -   For each emotion group, calculate the average **`Diff`** in memory scores before and after drug administration.
+
+    -   Compare the results. Does the primed emotion seem to have an effect on the memory scores?
+
+    Find more options from [data-wrangling-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+```{r}
+
+```
+
+# About the data
+
+In examples we'll be using a [Kaggle](https://www.kaggle.com/datasets/steveahn/memory-test-on-drugged-islanders-data?resource=download) "**Memory Test on Drugged Islanders Data**" dataset.
+
+Dataset description
+
+:   An experiment on the effects of anti-anxiety medicine on memory recall when being primed with happy or sad memories. The participants were done on novel Islanders whom mimic real-life humans in response to external factors.
+
+    Drugs of interest (known-as) [Dosage 1, 2, 3]:
+
+    A - Alprazolam (Xanax, Long-term) [1mg/3mg/5mg]
+
+    T - Triazolam (Halcion, Short-term) [0.25mg/0.5mg/0.75mg]
+
+    S- Sugar Tablet (Placebo) [1 tab/2tabs/3tabs]
+
+The easiest way to read in the data is to use `read_csv` command:
+
+```{r}
+Isd <- read_csv('data/Islander_data.csv')
+
+Isd
+```

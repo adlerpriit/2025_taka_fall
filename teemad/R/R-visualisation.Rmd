@@ -1,0 +1,827 @@
+---
+title: "Introduction to R"
+author: "Priit Adler"
+date: "2025-04-24"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction (Rstudio / R)
+
+You can find this and the data files from ELIXIREstonia github:
+<https://github.com/ELIXIREstonia/2025-04-24-R-visualisation>
+
+R is a popular open-source programming language and environment for statistical
+computing and graphics.
+
+RStudio is an integrated development environment (IDE) tailored for efficient
+and user-friendly R programming. Once launched, the RStudio UI presents itself
+in a segmented manner, primarily divided into four main panes.
+
+-   Text editor
+
+-   Console / Terminal / etc...
+
+-   Environment / History / Connections / Git
+
+-   Files / **Plots** / Packages / **Help** / etc...
+
+see: <https://rstudio.github.io/cheatsheets/html/rstudio-ide.html> for more
+detailed overview.
+
+This is the second part of a two-part curriculum designed to introduce R and
+ggplot2. If you are unfamiliar with the basic syntax, data types, and the
+tidyverse in R, then you should first check out Part One at:
+<https://github.com/ELIXIREstonia/2025-04-23-R-basic>.
+
+## Loading the Tidyverse
+
+```{r message=FALSE}
+# Install tidyverse if not already installed
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+
+# Load the tidyverse
+library(tidyverse)
+```
+
+## Reading Data from a File
+
+R supports a wide variety of file formats for reading and writing data. Some
+common formats include:
+
+-   CSV (Comma-Separated Values)
+-   TSV (Tab-Separated Values)
+-   Excel (XLS, XLSX)
+-   .. and few others
+
+The `tidyverse` packages, such as `readr` and `readxl`, provide functions for
+reading data from many of these formats. In this workshop, we'll focus on
+reading data from CSV, TSV.
+
+## About the data
+
+In examples we'll be using a
+[Kaggle](https://www.kaggle.com/datasets/steveahn/memory-test-on-drugged-islanders-data?resource=download)
+"**Memory Test on Drugged Islanders Data**" dataset.
+
+Dataset description
+
+:   An experiment on the effects of anti-anxiety medicine on memory recall when
+    being primed with happy or sad memories. The participants were done on novel
+    Islanders whom mimic real-life humans in response to external factors.
+
+    Drugs of interest (known-as) [Dosage 1, 2, 3]:
+
+    A - Alprazolam (Xanax, Long-term) [1mg/3mg/5mg]
+
+    T - Triazolam (Halcion, Short-term) [0.25mg/0.5mg/0.75mg]
+
+    S- Sugar Tablet (Placebo) [1 tab/2tabs/3tabs]
+
+The easiest way to read in the data is to use `read_csv` command:
+
+```{r}
+Isd <- read_csv('data/Islander_data.csv')
+
+Isd
+```
+
+# High-Level Overview of the Data with Tidyverse Pipes
+
+Tidyverse pipes, represented by the `%>%` \<ctrl+shift+M\> symbol, allow you to
+chain together multiple functions in a clear and readable manner. Pipes take the
+output of one function and use it as the input for the next function, making it
+easy to follow the sequence of data transformations.
+
+In the following example, we'll use pipes to perform a series of operations on
+our dataset: 1. Group the data by a specific category (`group_by`) 2. Calculate
+summary statistics for each group (`summarize`) 3. Sort the resulting summary by
+a specific statistic (`arrange`)
+
+```{r include=FALSE}
+# Create a dummy dataset
+set.seed(42)
+data <- tibble(
+  YourCategory = factor(sample(LETTERS[1:5], 100, replace = TRUE)),
+  YourVariable = rnorm(100, mean = 50, sd = 10),
+  YourOtherVariable = rnorm(100, mean = 20, sd = 2)
+)
+head(data)
+```
+
+```{r}
+# Summarize the data
+data_summary <- data %>% 
+  group_by(YourCategory) %>%
+  summarize(
+    mean_value = mean(YourVariable, na.rm = TRUE),
+    n = n()
+  ) %>%
+  arrange(desc(mean_value))
+
+head(data_summary)
+```
+
+In the above code, replace `YourCategory` and `YourVariable` with the
+appropriate column names from your dataset. This will give a high-level overview
+of the data, summarizing it by the specified category and calculating the mean
+of the specified variable. The use of pipes makes it easy to understand the
+sequence of transformations applied to the data.
+
+```{r}
+# New column using mutate and case_when statement
+# note that we are overwriting (updating) the original data
+data <- data %>%
+  mutate(
+    HalfOfOtherVariable = YourOtherVariable / 2, # we can add another column based on existing columns
+    YourGroup = case_when(
+      YourCategory %in% c("A", "B") ~ "Group 1", # combine A and B into Group 1
+      YourCategory %in% c("C", "D") ~ "Group 2", # combine C and D into Group 2
+      TRUE ~ "Other"                             # case_when needs fallback default value, 
+                                                 # if none of the above match
+    ),
+    NewVariable = case_when(
+      YourVariable > 60 ~ YourVariable * 2,  # Double values above 60
+      YourVariable < 40 ~ YourVariable / 2,  # Halve values below 40
+      TRUE ~ YourVariable                    # Keep as is otherwise
+    )
+  )
+head(data)
+```
+
+Rstudio developers host number of useful
+[cheatsheets](https://posit.co/resources/cheatsheets/), take a look. For example
+[data transformations with
+dplyr](https://rstudio.github.io/cheatsheets/data-transformation.pdf) (dplyr is
+part of tidyverse)
+
+### Task:
+
+**Task: Analyzing Effects of Drugs on Memory**
+
+Using the "Memory Test on Drugged Islanders Data" dataset, your task is to
+analyze the effects of the different drugs and their dosages on memory recall.
+
+1.  **Age Group Column**:
+
+    -   Create a new column in the dataset called **`age_group`**. Categorize
+        participants as "Young" if they are below 30, "Middle-aged" if they are
+        between 30 and 50, and "Senior" if they are above 50. (*hint:*
+        `case_when`)
+
+```{r}
+
+
+
+```
+
+# Plotting with ggplot2
+
+The ggplot2 package in R follows a modular paradigm based on the "Grammar of
+Graphics." This modular approach allows users to build complex plots by
+combining simple components or layers. Each layer represents a specific element
+of the plot, such as data, aesthetics, geoms, scales, and themes.
+
+1.  **Data**: This is the foundation of any plot. You specify the dataset you
+    want to visualize.
+
+2.  **Aesthetics**: Aesthetics are the visual properties of the plot, such as x
+    and y position, color, size, shape, and transparency. You map variables in
+    the dataset to these aesthetics, creating a relationship between the data
+    and the plot elements.
+
+3.  **Geoms**: Geoms (short for geometric objects) are the actual plot elements,
+    such as points, lines, and bars. Different geoms represent different types
+    of plots, like scatter plots, line plots, or bar plots. You can add multiple
+    geoms to a single plot to create complex visualizations.
+
+4.  **Scales**: Scales control how data values are mapped to aesthetic
+    properties. They define the transformation and mapping of data values to
+    visual properties, such as colors, sizes, or shapes. You can adjust scales
+    to customize the appearance of the plot.
+
+5.  **Themes**: Themes control the non-data aspects of the plot, such as the
+    background, gridlines, axis labels, and legend. You can customize the plot's
+    appearance by changing its theme.
+
+In the ggplot2 modular paradigm, you start by specifying the data and the
+aesthetics, then add geoms, scales, and themes as needed. This layer-by-layer
+approach allows you to create a wide range of plots by combining and customizing
+these components.
+
+Here's an example that demonstrates the modular paradigm:
+
+```{r}
+# Define data and aesthetics
+plot <- ggplot(data = iris %>% filter(Petal.Length > 4), aes(x = Sepal.Length, y = Sepal.Width, color = Petal.Length)) +
+  geom_point() + 
+  scale_color_continuous(low = "blue", high = "red") + 
+  theme_minimal()
+
+# Display the final plot
+plot
+```
+
+In this example, we first define the data and aesthetics, then add a point geom,
+adjust the color scale, and finally apply a minimal theme. The result is a
+scatter plot that shows the relationship between car weight and miles per
+gallon, with points colored according to horsepower.
+
+## Aesthetics in ggplot2
+
+Aesthetics are the visual properties of the elements in a plot. They help convey
+the underlying patterns and relationships in the data. In ggplot2, you map
+variables from your dataset to aesthetics to create a relationship between the
+data and the plot elements. Common aesthetics include `x` and `y` position,
+`color`, `size`, `shape`, `group`, and `transparency`.
+
+### Mapping Aesthetics
+
+Let's create a scatter plot with the `age` variable mapped to the x-axis, the
+`Diff` variable mapped to the y-axis, and the `Drug` variable mapped to the
+color aesthetics:
+
+```{r}
+# Create a scatter plot with aesthetics mapped to variables
+scatter_plot <- ggplot(Isd, aes(x = age, y = Diff, color = factor(Drug))) +
+  geom_point()
+
+scatter_plot
+```
+
+### Modifying Aesthetic Properties and Overwriting in Geoms
+
+You can modify aesthetic properties directly within a geom. This allows you to
+make specific adjustments to the appearance of individual plot elements. Let's
+create a scatter plot with larger points and a custom transparency:
+
+```{r}
+# Modify the size and transparency of points within the geom
+scatter_plot_independent_aes <- ggplot(Isd, aes(x = age, y = Diff)) +
+  geom_point(size = 3, alpha = 0.3, color='blue')
+
+scatter_plot_independent_aes
+
+scatter_plot_data_related_aes <- ggplot(Isd, aes(x = age, y = Diff)) +
+  geom_point(size = 3, alpha = 0.5, aes(color = factor(Drug)))
+
+scatter_plot_data_related_aes
+
+```
+
+In this example, we have increased the size of the points and made them
+semi-transparent by setting the `size` and `alpha` arguments within the
+`geom_point()` function, respectively. By modifying aesthetics directly within a
+geom, you can overwrite the initial mappings created by the `aes()` function and
+gain more control over the appearance of your plot elements.
+
+## Exploring Different Geom Selections
+
+In this section, we will demonstrate various geom selections using simple dummy
+data. Each geom represents a specific type of plot, and their applicability
+depends on the type of data (numeric vs. categorical) and the relationship you
+want to visualize.
+
+### Scatterplot (geom_point)
+
+A scatterplot displays the relationship between two numeric variables by
+plotting points at their respective x and y coordinates. It's useful for
+visualizing trends, patterns, or outliers in the data.
+
+```{r fig.width=6, fig.height=6}
+# Use Islander dataset as an example
+head(Isd)
+
+# Create a scatterplot of memory score before vs memory score after taking the drug
+scatter_plot <- ggplot(Isd, aes(x = Mem_Score_Before, y = Mem_Score_After)) +
+  geom_point()
+
+scatter_plot
+```
+
+### Line Plot (geom_line)
+
+A line plot connects data points with lines to visualize the relationship
+between two numeric variables. It's useful for showing trends over time or any
+continuous variable.
+
+```{r}
+# Use the pressure dataset as an example
+head(pressure)
+
+# Create a line plot of temperature vs. pressure
+line_plot <- ggplot(pressure, aes(x = temperature, y = pressure)) +
+  geom_line()
+
+line_plot
+```
+
+### Bar Plot (geom_bar) and Column Plot (geom_col)
+
+A bar plot displays the frequency or count of categorical data, while a column
+plot displays the value of a numeric variable for each category. Both are useful
+for visualizing relationships between categorical and numeric variables.
+
+```{r}
+# Use Islander dataset as an example
+head(Isd)
+
+# on categorical data, count how many instances of each appears in the data
+bar_plot <- ggplot(Isd, aes(x = Drug)) +
+  geom_bar()
+
+bar_plot
+
+# on numerical data (y-axis) sum up all values, relative to x axis categories
+column_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
+  geom_col()
+
+column_plot
+```
+
+### Histogram (geom_histogram)
+
+A histogram groups numeric data into bins and displays the frequency of
+observations in each bin. It's useful for visualizing the distribution of a
+numeric variable.
+
+```{r}
+# Create a histogram of the mpg variable from the mtcars dataset
+histogram_plot <- ggplot(Isd, aes(x = age)) +
+  geom_histogram(binwidth = 2)
+
+histogram_plot
+```
+
+### Box Plot (geom_boxplot)
+
+A box plot displays the distribution of a numeric variable across different
+categories. It's useful for comparing distributions and identifying outliers
+within categorical groups.
+
+```{r}
+# Create a box plot of price by cut for the diamonds dataset
+box_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
+  geom_boxplot()
+
+box_plot
+```
+
+These are just a few examples of the many `geoms` available in ggplot2. By
+selecting the appropriate geom for your data, you can create informative and
+visually appealing plots that effectively communicate the relationships within
+your dataset.
+
+## Position Adjustments and Adding Multiple Layers
+
+### Jittering Points (position = "jitter")
+
+In scatter plots, data points can sometimes overlap, making it difficult to
+discern individual observations. To address this issue, you can apply a position
+adjustment, such as `jitter`, which slightly moves the points in a random
+direction to reduce overlap.
+
+```{r}
+
+jittered_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
+  geom_point(position = position_jitter(width = 0.4), alpha = 0.5) +
+  geom_boxplot(aes(fill = Drug), alpha = 0.2, outlier.shape = NA) +
+  theme_minimal()
+
+jittered_plot
+```
+
+In this example, the points are `jittered` to reduce overlap, making it easier
+to see the distribution of observations within each `cut` category.
+
+### Adding Multiple Layers (Geoms)
+
+You can add multiple `geoms` to a single plot to create more complex
+visualizations. For example, you can combine a scatter plot with a smoothed line
+to show the overall trend, and add text labels to annotate specific data points.
+
+```{r}
+# Use the mtcars dataset as an example
+head(mtcars)
+
+# Create a scatter plot of mpg (miles per gallon) vs. wt (weight) with a smoothed line
+scatter_plot_smooth <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method = "loess", se = FALSE, linetype = "dashed", color = "blue") +
+  theme_minimal()
+
+scatter_plot_smooth
+
+# Annotate specific data points with text labels
+scatter_plot_annotate <- scatter_plot_smooth +
+  geom_text(data = subset(mtcars, mpg > 30 | wt > 5), 
+            size = 3, hjust = 0.25, vjust = 1.5, 
+            mapping = aes(label=rownames(subset(mtcars, mpg > 30 | wt > 5)))) +
+  annotate(geom = 'text', x = 5, y = 30, label="Text that I can add here", color="blue")
+
+scatter_plot_annotate
+```
+
+In this example, we first created a scatter plot of `mpg` vs. `wt` and added a
+smoothed line using `geom_smooth`. Then, we annotated specific data points with
+text labels using `geom_text`. By combining multiple `geoms`, you can create
+more informative and visually appealing plots.
+
+### Task:
+
+Use the cell below to repeat the steps we have done so far. Generate a plot
+where you show `Islander_data` data by `Drug` and `Diff`. Use `geom_violin`,
+what does it show and how to interpret it? Add `geom_point` to there as well,
+make it very light (transparent), use position `jitter`. Find more options from
+[data-transformations](https://rstudio.github.io/cheatsheets/data-transformation.pdf)
+cheatsheet.
+
+```{r fig.width=8, fig.height=6}
+
+
+
+```
+
+## Scaling Numeric and Discrete Variables
+
+Scaling variables allows you to transform their range, making it easier to
+visualize data that spans multiple orders of magnitude or to compare multiple
+variables with different units.
+
+### Scaling Numeric Variables
+
+For numeric variables, you can use `scale_x_continuous()` and
+`scale_y_continuous()` to adjust the scales of the `x` and `y` axes. The
+`mtcars` dataset, which is built into R, provides a great example for
+demonstrating this.
+
+Example: Log Transformation of Horsepower Let's create a scatter plot of miles
+per gallon (mpg) vs. horsepower (hp) and scale the `y` axis using log
+transformations:
+
+```{r}
+
+# Scatter plot with log-scaled y-axis using mtcars data
+scatter_plot_scaled <- ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point(alpha = 0.5) +
+  scale_y_continuous(trans = "log10")
+
+scatter_plot_scaled
+```
+
+In this example, using log transformations to scale the horsepower helps reveal
+patterns in the relationship between fuel efficiency (mpg) and engine power (hp)
+that might not be apparent with the original scales.
+
+### Scaling Discrete Variables
+
+For discrete variables, you can use `scale_x_discrete()` and
+`scale_y_discrete()` to modify the order or appearance of the categories. With
+`mtcars`, we can explore how the number of cylinders (cyl) in a car affects its
+fuel efficiency (mpg).
+
+Example: Reordering Cylinder Categories by Median MPG Let's create a box plot of
+the number of cylinders vs. mpg and reorder the cylinder categories based on
+their median mpg:
+
+```{r}
+# Calculate the median mpg for each cylinder category
+cyl_median <- mtcars %>%
+  group_by(cyl) %>%
+  summarize(median_mpg = median(mpg, na.rm = TRUE)) %>%
+  arrange(median_mpg)
+
+# Create a box plot with reordered cylinder categories
+box_plot_scaled <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
+  geom_boxplot() +
+  scale_x_discrete(limits = factor(cyl_median$cyl)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Number of cylinders")
+
+box_plot_scaled
+```
+
+In this example, reordering the number of cylinders based on the median miles
+per gallon helps highlight differences in fuel efficiency across different
+engine sizes. This makes it easier to compare the fuel efficiency of cars with
+varying numbers of cylinders.
+
+Scaling variables can enhance the readability of your plots and reveal hidden
+patterns in your data. By applying appropriate transformations to numeric and
+discrete variables, you can create more effective visualizations.
+
+## Color Scaling
+
+Color scaling can be used to visualize an additional variable in a plot, adding
+an extra dimension of information. In this revised example, we'll create a box
+plot of the number of cylinders (**`cyl`**) vs. miles per gallon (**`mpg`**),
+with the color of the points representing engine displacement (**`disp`**).
+
+```{r}
+# Create a box plot with reordered cylinder categories and color scaling
+box_plot_color_scaled <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
+  geom_boxplot(alpha = 0.4, outlier.shape = NA) +  # fill based on disp
+  geom_jitter(aes(color = disp), width = 0.3) +  # jitter points colored by disp
+  scale_x_discrete(limits = factor(cyl_median$cyl)) +
+  scale_color_gradient(low = "blue", high = "red") +  # gradient color for jitter points
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+box_plot_color_scaled
+```
+
+In this example, **`scale_fill_gradient`** and **`scale_color_gradient`** are
+used to adjust the color scales based on the engine displacement (**`disp`**).
+The box plots and jitter points are colored from blue (lower displacement) to
+red (higher displacement), providing an extra layer of information on top of the
+relationship between the number of cylinders and mpg.
+
+By applying color scaling, you create richer visualizations that display more
+information and enhance the understanding of your data. This technique is
+particularly useful in exploring and presenting complex relationships in a
+dataset.
+
+## Refactoring and Reordering Factorial Data
+
+Factor variables are categorical variables that can take a limited number of
+distinct values. In ggplot2, you can refactor and reorder factor variables to
+enhance your visualizations.
+
+### Refactoring
+
+Refactoring involves changing the levels of a factor variable. You can use the
+`forcats` package (part of the tidyverse) to refactor variables. The
+`fct_recode()` function can be used to recode the levels of a factor. See also
+[cheatsheet](https://rstudio.github.io/cheatsheets/factors.pdf).
+
+```{r}
+# Load the required packages
+# library(forcats)
+
+# # Recode the Drug variable
+Isd_refactored <- Isd %>%
+  mutate(Drug_name = fct_recode(Drug,
+                                "Alprazolam" = "A",
+                                "Triazolam" = "T",
+                                "Sugar" = "S"))
+
+head(Isd_refactored)
+```
+
+In this example, we refactored the `Drug` variable by changing the levels from
+letters to actual drug names.
+
+### Reordering
+
+Reordering involves changing the order of the levels of a factor variable. You
+can use the `fct_reorder()` function to reorder the levels of a factor based on
+the values of another variable.
+
+```{r}
+# Create a new column with reordered genre based on the median intgross
+Isd_reordered <- Isd_refactored %>%
+  mutate(Drug_reordered = fct_reorder(Drug_name, Diff, .fun = max, .desc = TRUE))
+
+head(Isd_reordered)
+```
+
+In this example, we reordered the levels of the `Drug` variable based on the
+median value of `Diff` for each genre. This can be useful for creating plots
+where the categories are ordered meaningfully.
+
+Now let's create a bar plot of the reordered Drug_reordered with the refactored
+Drug_name variable:
+
+```{r}
+# Create a bar plot of the reordered Drug and Happy_Sad_group variables
+bar_plot_reordered <- ggplot(Isd_reordered, aes(x = Drug_reordered, fill = Happy_Sad_group)) +
+  geom_bar(position = "dodge") +
+  labs(x = "Drug (reordered)", fill = "Happy/Sad Group") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+bar_plot_reordered
+```
+
+In this plot, we used the refactored and reordered `Drug` variable to create a
+more informative visualization. By refactoring and reordering factor variables,
+you can enhance the readability and effectiveness of your plots.
+
+## Enhancing Plots with Titles, Axis Labels, Limits, and Themes
+
+Adding titles, axis labels, limits, and customizing the theme can make your
+plots more informative and visually appealing. In this section, we will
+demonstrate how to enhance a plot using these features.
+
+Let's create a scatter plot of **`Sepal.Length`** vs **`Sepal.Width`** and use
+the **`Petal.Length`** column for color scaling in the **`iris`** dataset:
+
+```{r}
+
+# Create a scatter plot of Sepal.Length vs Sepal.Width and use Petal.Length for color scaling
+scatter_plot_example <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Petal.Length)) +
+  geom_point(alpha = 0.7) +
+  scale_color_continuous(low = "blue", high = "red") +
+  theme_minimal()
+
+scatter_plot_example
+```
+
+### Adding Title and Axis Labels
+
+You can add a main title, subtitle, and axis labels using the `labs()` function:
+
+```{r}
+# Add a main title, subtitle, and axis labels
+scatter_plot_labeled <- scatter_plot_example +
+  labs(
+    title = "Sepal Length vs. Sepal Width",
+    subtitle = "Colored by Petal Length",
+    x = "Sepal Length",
+    y = "Sepal Width",
+    color = "Petal Length"
+  )
+
+scatter_plot_labeled
+```
+
+### Setting Axis Limits
+
+To set the limits for the x and y axes, you can use the `xlim()` and `ylim()`
+functions:
+
+```{r}
+# Set the limits for the x and y axes
+scatter_plot_limited <- scatter_plot_labeled +
+  xlim(4, 8) +
+  ylim(2, 4) + 
+  geom_point(mapping = aes(size = Petal.Width), alpha=0.4) +
+  labs(size = 'Petal Width')
+
+scatter_plot_limited
+```
+
+### Customizing the Theme
+
+You can customize the appearance of your plot by modifying the theme. The
+`theme()` function allows you to change various aspects of the plot, such as
+text size, font, background colors, and grid lines:
+
+```{r}
+scatter_plot_custom_theme <- scatter_plot_limited +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_rect(fill = "white"),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.5),
+    panel.grid.minor = element_line(color = "gray", linetype = "dotted", linewidth = 0.25)
+  )
+
+scatter_plot_custom_theme
+```
+
+By adding titles, axis labels, limits, and customizing the theme, you can create
+more informative and visually appealing plots that effectively communicate your
+data's story. See
+[cheatsheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf) for
+additional themes.
+
+## Exporting and Saving Plots with ggsave
+
+`ggsave()` is a convenient function for saving your ggplot2 plots in various
+file formats, such as PNG, PDF, SVG, or TIFF. Using `ggsave()`, you can easily
+save high-quality versions of your plots for use in reports, presentations, or
+publications.
+
+To save this plot as a high-quality PNG image, you can use the `ggsave()`
+function:
+
+```{r}
+# Save the plot as a PNG file
+ggsave(
+  filename = "scatter_plot_example.png",
+  plot = scatter_plot_example,
+  width = 8,
+  height = 5,
+  dpi = 300
+)
+```
+
+In this example, we saved the `scatter_plot_example` plot as a PNG file with a
+width of 8 inches, a height of 5 inches, and a resolution of 300 dots per inch
+(DPI). You can adjust the `width`, `height`, and `dpi` parameters to control the
+size and quality of the saved image. Here `plot =` argument may be optional --
+if plot is not assigned it will by default take the last active plot.
+
+To save the plot in a different file format, you can change the file extension
+in the `filename` parameter. For example, to save the plot as a PDF, you can
+use:
+
+```{r}
+# Save the plot as a PDF file
+ggsave(
+  filename = "scatter_plot_custom_theme.pdf",
+  plot = scatter_plot_custom_theme,
+  width = 8,
+  height = 5
+)
+```
+
+By using `ggsave()`, you can easily export and save your ggplot2 plots in a
+variety of file formats to share or include in your documents.
+
+## Combining Multiple Plots with patchwork
+
+The `patchwork` package allows you to easily combine multiple ggplot2 plots into
+a single layout. This can be useful for comparing different visualizations side
+by side or creating more complex visualizations.
+
+First, let's create some example plots using the `mtcars` dataset:
+
+```{r}
+# Load the required packages
+library(ggplot2)
+library(patchwork)
+
+# Create a scatter plot of mpg vs. wt
+scatter_plot <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(aes(color = cyl)) +
+  labs(title = "Miles per Gallon vs. Weight", x = "Weight (1000 lbs)", y = "Miles per Gallon", color = "Cylinders") +
+  theme_minimal()
+
+# Create a bar plot of the number of cars per number of cylinders
+bar_plot <- ggplot(mtcars, aes(x = factor(cyl))) +
+  geom_bar(aes(fill = factor(cyl))) +
+  labs(title = "Number of Cars per Number of Cylinders", x = "Number of Cylinders", y = "Count", fill = "Cylinders") +
+  theme_minimal()
+
+# Create a box plot of mpg per number of cylinders
+box_plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
+  geom_boxplot(aes(fill = factor(cyl))) +
+  labs(title = "Miles per Gallon per Number of Cylinders", x = "Number of Cylinders", y = "Miles per Gallon", fill = "Cylinders") +
+  theme_minimal() # + theme(legend.position = "None")
+```
+
+Now, let's use the `patchwork` package to combine these plots:
+
+```{r}
+# Combine the plots using patchwork
+combined_plot <- scatter_plot + bar_plot + box_plot + plot_layout(ncol = 1)
+combined_plot
+```
+
+In this example, we combined the three plots into a single column layout. You
+can adjust the layout by changing the `ncol` and `nrow` parameters in the
+`plot_layout()` function.
+
+To collect the legends and add a global title, subtitle, and caption, you can
+use the `plot_annotation()` function:
+
+```{r fig.height=8, fig.width=10}
+# Collect legends and add global title, subtitle, and caption
+combined_plot_annotated <- scatter_plot / (bar_plot + box_plot) +
+  plot_annotation(
+    title = "Exploring the mtcars Dataset",
+    subtitle = "Scatter plot, bar plot, and box plot",
+    caption = "Data source: mtcars",
+    tag_levels = 'A'
+  ) +
+  plot_layout(guides = "collect")
+
+combined_plot_annotated
+```
+
+By using the `patchwork` package, you can combine multiple ggplot2 plots into a
+single layout, making it easier to compare and present your visualizations.
+
+### Task:
+
+Now it's your time to shine. Let your imagination fly and explore the Islander
+example dataset. Come up with your own visualisation. Use as many plots, as many
+colours and themes as you see fit. Start building it gradually, this makes
+finding and identifying errors easier. You can even take your own data and
+explore it. But try to get to a publishing ready image (*sans* figure legend).
+
+Explore more options from various
+[cheatsheets](https://posit.co/resources/cheatsheets/).
+
+```{r}
+
+
+
+```
+
+#### Bonus
+
+Explore
+['esquisse'](https://cran.r-project.org/web/packages/esquisse/vignettes/get-started.html)
+package for interactive plot building. It starts a shiny app to allow
+drag-and-drop graph building.
