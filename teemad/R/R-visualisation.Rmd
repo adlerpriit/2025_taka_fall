@@ -1,5 +1,5 @@
 ---
-title: "Introduction to R"
+title: "ggplot ja graafika grammatika R-is"
 author: "Priit Adler"
 date: "2025-04-24"
 output: html_document
@@ -12,81 +12,85 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introduction (Rstudio / R)
+## Sissejuhatus (Rstudio / R)
 
-You can find this and the data files from ELIXIREstonia github:
-<https://github.com/ELIXIREstonia/2025-04-24-R-visualisation>
+Selle ja andmefailid leiad ELIXIREstonia githubist:
+<https://github.com/adlerpriit/2025_taka_fall/tree/main/teemad/R>
 
-R is a popular open-source programming language and environment for statistical
-computing and graphics.
+R on populaarne avatud lähtekoodiga programmeerimiskeel ja keskkond
+statistiliseks andmetöötluseks ja graafikute loomiseks.
 
-RStudio is an integrated development environment (IDE) tailored for efficient
-and user-friendly R programming. Once launched, the RStudio UI presents itself
-in a segmented manner, primarily divided into four main panes.
+RStudio on integreeritud arenduskeskkond (IDE), mis on loodud tõhusaks ja
+kasutajasõbralikuks R programmeerimiseks. Käivitamisel jaguneb RStudio
+kasutajaliides neljaks põhiosaks.
 
--   Text editor
+-   Tekstiredaktor
 
--   Console / Terminal / etc...
+-   Konsool / Terminal / jne...
 
--   Environment / History / Connections / Git
+-   Keskkond / Ajalugu / Ühendused / Git
 
--   Files / **Plots** / Packages / **Help** / etc...
+-   Failid / **Joonised** / Paketid / **Abi** / jne...
 
-see: <https://rstudio.github.io/cheatsheets/html/rstudio-ide.html> for more
-detailed overview.
+Vaata: <https://rstudio.github.io/cheatsheets/html/rstudio-ide.html> põhjalikuma
+ülevaate saamiseks.
 
-This is the second part of a two-part curriculum designed to introduce R and
-ggplot2. If you are unfamiliar with the basic syntax, data types, and the
-tidyverse in R, then you should first check out Part One at:
-<https://github.com/ELIXIREstonia/2025-04-23-R-basic>.
+See on kaheosalise õppetunni teine osa, mis tutvustab R-i ja ggplot2-te. Kui sa
+ei tunne veel R-i põhisisüntaksit, andmetüüpe ja tidyverse'i, siis vaata esmalt
+esimest osa: [R-basic.Rmd](R-basic.Rmd).
 
-## Loading the Tidyverse
+## Tidyverse laadimine
 
 ```{r message=FALSE}
-# Install tidyverse if not already installed
+# Paigalda tidyverse, kui see pole veel paigaldatud
 if (!requireNamespace("tidyverse", quietly = TRUE)) {
   install.packages("tidyverse")
 }
 
-# Load the tidyverse
+# Laadi tidyverse
 library(tidyverse)
 ```
 
-## Reading Data from a File
+## Andmete lugemine failist
 
-R supports a wide variety of file formats for reading and writing data. Some
-common formats include:
+R toetab mitmeid failiformaate andmete lugemiseks ja salvestamiseks. Levinumad
+formaadid:
 
--   CSV (Comma-Separated Values)
--   TSV (Tab-Separated Values)
+-   CSV (komaga eraldatud väärtused)
+-   TSV (tabiga eraldatud väärtused)
 -   Excel (XLS, XLSX)
--   .. and few others
+-   .. ja mõned teised
 
-The `tidyverse` packages, such as `readr` and `readxl`, provide functions for
-reading data from many of these formats. In this workshop, we'll focus on
-reading data from CSV, TSV.
+`tidyverse` paketid, nagu `readr` ja `readxl`, pakuvad funktsioone paljude
+formaatide lugemiseks. Selles töötoas keskendume CSV ja TSV failidele.
 
-## About the data
+## Andmestiku kohta
 
-In examples we'll be using a
+Näidetes kasutame
 [Kaggle](https://www.kaggle.com/datasets/steveahn/memory-test-on-drugged-islanders-data?resource=download)
-"**Memory Test on Drugged Islanders Data**" dataset.
+andmestikku "**Memory Test on Drugged Islanders Data**".
 
-Dataset description
+Andmestiku kirjeldus
 
-:   An experiment on the effects of anti-anxiety medicine on memory recall when
-    being primed with happy or sad memories. The participants were done on novel
-    Islanders whom mimic real-life humans in response to external factors.
+:   Eksperiment uuris ärevusvastaste ravimite mõju mälulisele meenutusele
+    olukorras, kus katsealuseid suunati meenutama kas rõõmsaid või kurbi
+    mälestusi. Katse viidi läbi simuleeritud osalejatega (nn „Islander’id“), kes
+    matkivad inimkäitumist väliste mõjutuste suhtes.
 
-    Drugs of interest (known-as) [Dosage 1, 2, 3]:
+    ### Ravimid ja doosid
 
-    A - Alprazolam (Xanax, Long-term) [1mg/3mg/5mg]
+    Uuritavad rühmad said erinevaid ravimeid või platseebot, igaüks kolmes
+    doosivahemikus:
 
-    T - Triazolam (Halcion, Short-term) [0.25mg/0.5mg/0.75mg]
+    -   **A – Alprazolam (Xanax, pikaajalisem toime):** 1 mg, 3 mg, 5 mg
 
-    S- Sugar Tablet (Placebo) [1 tab/2tabs/3tabs]
+    -   **T – Triazolam (Halcion, lühiajaline toime):** 0.25 mg, 0.5 mg, 0.75 mg
 
-The easiest way to read in the data is to use `read_csv` command:
+    -   **S – Platseebo (suhkrutablett):** 1, 2 või 3 tabletti
+
+    Doosid valiti nii, et need oleksid võrreldavad (1:1 suhe).
+
+Lihtsaim viis andmete lugemiseks on kasutada `read_csv` käsku:
 
 ```{r}
 Isd <- read_csv('data/Islander_data.csv')
@@ -94,20 +98,20 @@ Isd <- read_csv('data/Islander_data.csv')
 Isd
 ```
 
-# High-Level Overview of the Data with Tidyverse Pipes
+# Andmete kõrgetasemeline ülevaade tidyverse toru-operaatoritega ('pipe', `%>%`)
 
-Tidyverse pipes, represented by the `%>%` \<ctrl+shift+M\> symbol, allow you to
-chain together multiple functions in a clear and readable manner. Pipes take the
-output of one function and use it as the input for the next function, making it
-easy to follow the sequence of data transformations.
+Tidyverse toru-operaatorid, mida tähistab `%>%` \<ctrl+shift+M\>, võimaldavad mitut
+funktsiooni järjestada selgelt ja loetavalt. Toru-operaator võtab ühe funktsiooni
+väljundi ja annab selle järgmise funktsiooni sisendiks, muutes andmetöötluse
+järjestuse lihtsasti jälgitavaks.
 
-In the following example, we'll use pipes to perform a series of operations on
-our dataset: 1. Group the data by a specific category (`group_by`) 2. Calculate
-summary statistics for each group (`summarize`) 3. Sort the resulting summary by
-a specific statistic (`arrange`)
+Järgmises näites kasutame toru-operaatorit, et teha järjestikuseid toiminguid: 1.
+Rühmitame andmed kategooria järgi (`group_by`) 2. Arvutame iga rühma kohta
+kokkuvõtlikud näitajad (`summarize`) 3. Sorteerime tulemused kindla näitaja
+järgi (`arrange`)
 
 ```{r include=FALSE}
-# Create a dummy dataset
+# Loome näidisandmestiku
 set.seed(42)
 data <- tibble(
   YourCategory = factor(sample(LETTERS[1:5], 100, replace = TRUE)),
@@ -118,7 +122,7 @@ head(data)
 ```
 
 ```{r}
-# Summarize the data
+# Andmete kokkuvõte
 data_summary <- data %>% 
   group_by(YourCategory) %>%
   summarize(
@@ -130,141 +134,135 @@ data_summary <- data %>%
 head(data_summary)
 ```
 
-In the above code, replace `YourCategory` and `YourVariable` with the
-appropriate column names from your dataset. This will give a high-level overview
-of the data, summarizing it by the specified category and calculating the mean
-of the specified variable. The use of pipes makes it easy to understand the
-sequence of transformations applied to the data.
+Ülaltoodud koodis asenda `YourCategory` ja `YourVariable` oma andmestiku
+veergude nimedega. See annab kõrgetasemelise ülevaate, rühmitades andmed ja
+arvutades keskmise. toru-operaatorid muudavad andmetöötluse järjestuse hästi
+jälgitavaks.
 
 ```{r}
-# New column using mutate and case_when statement
-# note that we are overwriting (updating) the original data
+# Uus veerg mutate ja case_when abil
+# pane tähele, et kirjutame (uuendame) originaalandmestikku
 data <- data %>%
   mutate(
-    HalfOfOtherVariable = YourOtherVariable / 2, # we can add another column based on existing columns
+    HalfOfOtherVariable = YourOtherVariable / 2, # lisame uue veeru olemasolevate põhjal
     YourGroup = case_when(
-      YourCategory %in% c("A", "B") ~ "Group 1", # combine A and B into Group 1
-      YourCategory %in% c("C", "D") ~ "Group 2", # combine C and D into Group 2
-      TRUE ~ "Other"                             # case_when needs fallback default value, 
-                                                 # if none of the above match
+      YourCategory %in% c("A", "B") ~ "Grupp 1", # ühendame A ja B Grupp 1-ks
+      YourCategory %in% c("C", "D") ~ "Grupp 2", # ühendame C ja D Grupp 2-ks
+      TRUE ~ "Muu"                              # case_when vajab vaikimisi väärtust
     ),
     NewVariable = case_when(
-      YourVariable > 60 ~ YourVariable * 2,  # Double values above 60
-      YourVariable < 40 ~ YourVariable / 2,  # Halve values below 40
-      TRUE ~ YourVariable                    # Keep as is otherwise
+      YourVariable > 60 ~ YourVariable * 2,  # Korrutame üle 60 väärtused kahega
+      YourVariable < 40 ~ YourVariable / 2,  # Jagame alla 40 väärtused kahega
+      TRUE ~ YourVariable                    # Muud jätame samaks
     )
   )
 head(data)
 ```
 
-Rstudio developers host number of useful
-[cheatsheets](https://posit.co/resources/cheatsheets/), take a look. For example
-[data transformations with
-dplyr](https://rstudio.github.io/cheatsheets/data-transformation.pdf) (dplyr is
-part of tidyverse)
+Rstudio arendajad pakuvad mitmeid kasulikke
+[spikreid](https://posit.co/resources/cheatsheets/), vaata kindlasti. Näiteks
+[data transformatsioonid
+dplyr-iga](https://rstudio.github.io/cheatsheets/data-transformation.pdf) (dplyr
+kuulub tidyverse'i).
 
-### Task:
+### Ülesanne:
 
-**Task: Analyzing Effects of Drugs on Memory**
+**Ülesanne: Uimastite mõju analüüs mälule**
 
-Using the "Memory Test on Drugged Islanders Data" dataset, your task is to
-analyze the effects of the different drugs and their dosages on memory recall.
+Kasutades andmestikku "Memory Test on Drugged Islanders Data", analüüsi
+erinevate ravimite ja nende dooside mõju mälu taastamisele.
 
-1.  **Age Group Column**:
+1.  **Vanuserühma veerg**:
 
-    -   Create a new column in the dataset called **`age_group`**. Categorize
-        participants as "Young" if they are below 30, "Middle-aged" if they are
-        between 30 and 50, and "Senior" if they are above 50. (*hint:*
-        `case_when`)
+    -   Loo andmestikku uus veerg nimega **`age_group`**. Kategoriseeri
+        osalejad: "Noor" (alla 30), "Keskealine" (30-50), "Seenior" (üle 50).
+        (*vihje:* `case_when`)
 
 ```{r}
-
+# Loo vanuserühma veerg
 
 
 ```
 
-# Plotting with ggplot2
+# Joonistamine ggplot2-ga
 
-The ggplot2 package in R follows a modular paradigm based on the "Grammar of
-Graphics." This modular approach allows users to build complex plots by
-combining simple components or layers. Each layer represents a specific element
-of the plot, such as data, aesthetics, geoms, scales, and themes.
+ggplot2 pakett R-is järgib "Graafika grammatika" modulaarset paradigmat. See
+lähenemine võimaldab kasutajal ehitada keerukaid jooniseid, kombineerides
+lihtsaid komponente ehk kihte. Iga kiht esindab kindlat osa joonisest, näiteks
+andmed, esteetikad, geomid, skaalad ja teemad.
 
-1.  **Data**: This is the foundation of any plot. You specify the dataset you
-    want to visualize.
+1.  **data**: Iga joonise alus. Määrad, millist andmestikku soovid
+    visualiseerida.
 
-2.  **Aesthetics**: Aesthetics are the visual properties of the plot, such as x
-    and y position, color, size, shape, and transparency. You map variables in
-    the dataset to these aesthetics, creating a relationship between the data
-    and the plot elements.
+2.  **aesthetics**: Esteetikad on joonise visuaalsed omadused, nagu x- ja
+    y-telg, värv, suurus, kuju ja läbipaistvus. Määrad, millised muutujad
+    andmestikust vastavad millistele esteetikatele.
 
-3.  **Geoms**: Geoms (short for geometric objects) are the actual plot elements,
-    such as points, lines, and bars. Different geoms represent different types
-    of plots, like scatter plots, line plots, or bar plots. You can add multiple
-    geoms to a single plot to create complex visualizations.
+3.  **geom**: Geomid (geomeetrilised objektid) on tegelikud joonise elemendid,
+    nagu punktid, jooned ja tulbad. Erinevad geomid tähistavad erinevat tüüpi
+    jooniseid, nt hajuvusdiagramm, joondiagramm või tulpdiagramm. Ühele
+    joonisele saab lisada mitu geom-i.
 
-4.  **Scales**: Scales control how data values are mapped to aesthetic
-    properties. They define the transformation and mapping of data values to
-    visual properties, such as colors, sizes, or shapes. You can adjust scales
-    to customize the appearance of the plot.
+4.  **scale**: Skaalad määravad, kuidas andmeväärtused teisendatakse
+    esteetilisteks omadusteks. Näiteks värvid, suurused või kujundid. Skaalasid
+    saab kohandada joonise välimuse muutmiseks.
 
-5.  **Themes**: Themes control the non-data aspects of the plot, such as the
-    background, gridlines, axis labels, and legend. You can customize the plot's
-    appearance by changing its theme.
+5.  **theme**: Kujundab joonise mitte-andmelisi aspekte, nagu taust,
+    ruudustik, telgede sildid ja legend. Kujundust (`theme`) muutes saab joonise välimust
+    muuta.
 
-In the ggplot2 modular paradigm, you start by specifying the data and the
-aesthetics, then add geoms, scales, and themes as needed. This layer-by-layer
-approach allows you to create a wide range of plots by combining and customizing
-these components.
+ggplot2 modulaarse lähenemise puhul alustad andmete ja esteetikate määramisest,
+seejärel lisad geom-e, skaalasid ja teemasid vastavalt vajadusele. Selline
+kihiline lähenemine võimaldab luua väga erinevaid jooniseid, kombineerides ja
+kohandades neid komponente.
 
-Here's an example that demonstrates the modular paradigm:
+Näide, mis demonstreerib modulaarset lähenemist:
 
 ```{r}
-# Define data and aesthetics
+# Määra andmed ja esteetikad
 plot <- ggplot(data = iris %>% filter(Petal.Length > 4), aes(x = Sepal.Length, y = Sepal.Width, color = Petal.Length)) +
   geom_point() + 
   scale_color_continuous(low = "blue", high = "red") + 
   theme_minimal()
 
-# Display the final plot
+# Kuvab joonise
 plot
 ```
 
-In this example, we first define the data and aesthetics, then add a point geom,
-adjust the color scale, and finally apply a minimal theme. The result is a
-scatter plot that shows the relationship between car weight and miles per
-gallon, with points colored according to horsepower.
+Selles näites määrame esmalt andmed ja esteetikad, lisame punktgeom-i, kohandame
+värviskaalat ja rakendame minimaalse teema. Tulemuseks on hajuvusdiagramm, mis
+näitab seost õielehe pikkuse ja laiuse vahel, punktid on värvitud vastavalt
+õielehe pikkusele.
 
-## Aesthetics in ggplot2
+## Esteetikad ggplot2-s
 
-Aesthetics are the visual properties of the elements in a plot. They help convey
-the underlying patterns and relationships in the data. In ggplot2, you map
-variables from your dataset to aesthetics to create a relationship between the
-data and the plot elements. Common aesthetics include `x` and `y` position,
-`color`, `size`, `shape`, `group`, and `transparency`.
+Esteetikad on joonise elementide visuaalsed omadused. Need aitavad esile tuua
+andmete mustreid ja seoseid. ggplot2-s seotakse andmestiku muutujad
+esteetikatega, et luua seos andmete ja joonise elementide vahel. Levinumad
+esteetikad on `x` ja `y` telg, `color`, `size`, `shape`, `group` ja
+`transparency`.
 
-### Mapping Aesthetics
+### Esteetikate määramine
 
-Let's create a scatter plot with the `age` variable mapped to the x-axis, the
-`Diff` variable mapped to the y-axis, and the `Drug` variable mapped to the
-color aesthetics:
+Loome hajuvusdiagrammi, kus `age` on x-teljel, `Diff` y-teljel ja `Drug` värvi
+esteetikana:
 
 ```{r}
-# Create a scatter plot with aesthetics mapped to variables
+# Hajuvusdiagramm, kus esteetikad on seotud muutujatega
 scatter_plot <- ggplot(Isd, aes(x = age, y = Diff, color = factor(Drug))) +
   geom_point()
 
 scatter_plot
 ```
 
-### Modifying Aesthetic Properties and Overwriting in Geoms
+### Esteetikate muutmine ja geom-is ülekirjutamine
 
-You can modify aesthetic properties directly within a geom. This allows you to
-make specific adjustments to the appearance of individual plot elements. Let's
-create a scatter plot with larger points and a custom transparency:
+Esteetika omadusi saab muuta otse geom-is. See võimaldab muuta konkreetsete
+joonise elementide välimust. Loome hajuvusdiagrammi, kus punktid on suuremad ja
+läbipaistvamad:
 
 ```{r}
-# Modify the size and transparency of points within the geom
+# Muuda punktide suurust ja läbipaistvust geom-is
 scatter_plot_independent_aes <- ggplot(Isd, aes(x = age, y = Diff)) +
   geom_point(size = 3, alpha = 0.3, color='blue')
 
@@ -277,117 +275,109 @@ scatter_plot_data_related_aes
 
 ```
 
-In this example, we have increased the size of the points and made them
-semi-transparent by setting the `size` and `alpha` arguments within the
-`geom_point()` function, respectively. By modifying aesthetics directly within a
-geom, you can overwrite the initial mappings created by the `aes()` function and
-gain more control over the appearance of your plot elements.
+Selles näites suurendasime punktide suurust ja muutsime need poolläbipaistvaks,
+määrates `size` ja `alpha` geom_point() sees. Esteetikate muutmine geom-is
+võimaldab algseid seoseid üle kirjutada ja joonise välimust täpsemalt
+kontrollida.
 
-## Exploring Different Geom Selections
+## Erinevate geom-ide kasutamine
 
-In this section, we will demonstrate various geom selections using simple dummy
-data. Each geom represents a specific type of plot, and their applicability
-depends on the type of data (numeric vs. categorical) and the relationship you
-want to visualize.
+Selles osas demonstreerime erinevaid geom-e lihtsa näidisandmestikuga. Iga geom
+esindab kindlat tüüpi joonist ja nende sobivus sõltub andmete tüübist (arvuline
+vs. kategooriline) ning sellest, millist seost soovid visualiseerida.
 
-### Scatterplot (geom_point)
+### Hajuvusdiagramm (scatterplot, geom_point)
 
-A scatterplot displays the relationship between two numeric variables by
-plotting points at their respective x and y coordinates. It's useful for
-visualizing trends, patterns, or outliers in the data.
+Hajuvusdiagramm näitab kahe arvulise muutuja seost, joonistades punktid nende x-
+ja y-koordinaatidele. Kasulik mustrite, trendide või erandite leidmiseks.
 
 ```{r fig.width=6, fig.height=6}
-# Use Islander dataset as an example
+# Kasuta Islander andmestikku näitena
 head(Isd)
 
-# Create a scatterplot of memory score before vs memory score after taking the drug
+# Hajuvusdiagramm mälu skoorist enne ja pärast ravimi võtmist
 scatter_plot <- ggplot(Isd, aes(x = Mem_Score_Before, y = Mem_Score_After)) +
   geom_point()
 
 scatter_plot
 ```
 
-### Line Plot (geom_line)
+### Joondiagramm (line plot, geom_line)
 
-A line plot connects data points with lines to visualize the relationship
-between two numeric variables. It's useful for showing trends over time or any
-continuous variable.
+Joondiagramm ühendab andmepunktid joontega, et näidata kahe arvulise muutuja
+vahelist seost. Kasulik trendide näitamiseks ajas või muutuvas suuruses.
 
 ```{r}
-# Use the pressure dataset as an example
+# Kasuta pressure andmestikku näitena
 head(pressure)
 
-# Create a line plot of temperature vs. pressure
+# Joondiagramm temperatuurist vs. rõhk
 line_plot <- ggplot(pressure, aes(x = temperature, y = pressure)) +
   geom_line()
 
 line_plot
 ```
 
-### Bar Plot (geom_bar) and Column Plot (geom_col)
+### Tulpdiagramm (geom_bar) ja veerudiagramm (geom_col)
 
-A bar plot displays the frequency or count of categorical data, while a column
-plot displays the value of a numeric variable for each category. Both are useful
-for visualizing relationships between categorical and numeric variables.
+Tulpdiagramm näitab kategooriliste andmete sagedust või arvu, veerudiagramm
+näitab arvulise muutuja väärtust iga kategooria kohta. Mõlemad sobivad
+kategooriliste ja arvuliste muutujate seoste visualiseerimiseks.
 
 ```{r}
-# Use Islander dataset as an example
+# Kasuta Islander andmestikku näitena
 head(Isd)
 
-# on categorical data, count how many instances of each appears in the data
+# Kategooriliste andmete puhul loe, mitu korda iga esineb
 bar_plot <- ggplot(Isd, aes(x = Drug)) +
   geom_bar()
 
 bar_plot
 
-# on numerical data (y-axis) sum up all values, relative to x axis categories
+# Arvuliste andmete puhul summeerib kõik väärtused x-telje kategooriate kaupa
 column_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
   geom_col()
 
 column_plot
 ```
 
-### Histogram (geom_histogram)
+### Histogramm (geom_histogram)
 
-A histogram groups numeric data into bins and displays the frequency of
-observations in each bin. It's useful for visualizing the distribution of a
-numeric variable.
+Histogramm jagab arvulised andmed vahemikeks (bin-ideks) ja näitab iga vahemiku
+sagedust. Kasulik arvulise muutuja jaotuse visualiseerimiseks.
 
 ```{r}
-# Create a histogram of the mpg variable from the mtcars dataset
+# Histogramm vanuse kohta Islander andmestikus
 histogram_plot <- ggplot(Isd, aes(x = age)) +
   geom_histogram(binwidth = 2)
 
 histogram_plot
 ```
 
-### Box Plot (geom_boxplot)
+### Kastdiagramm (geom_boxplot)
 
-A box plot displays the distribution of a numeric variable across different
-categories. It's useful for comparing distributions and identifying outliers
-within categorical groups.
+Kastdiagramm näitab arvulise muutuja jaotust erinevate kategooriate lõikes.
+Kasulik jaotuste võrdlemiseks ja erandite leidmiseks kategooriates.
 
 ```{r}
-# Create a box plot of price by cut for the diamonds dataset
+# Kastdiagramm Diff väärtuse kohta ravimite lõikes
 box_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
   geom_boxplot()
 
 box_plot
 ```
 
-These are just a few examples of the many `geoms` available in ggplot2. By
-selecting the appropriate geom for your data, you can create informative and
-visually appealing plots that effectively communicate the relationships within
-your dataset.
+Need on vaid mõned näited paljudest ggplot2 geom-idest. Õige geom-i valik aitab
+luua informatiivseid ja visuaalselt atraktiivseid jooniseid, mis toovad esile
+andmete seosed.
 
-## Position Adjustments and Adding Multiple Layers
+## Positsiooni kohandused ja mitme kihi lisamine
 
-### Jittering Points (position = "jitter")
+### Punktide hajutamine (position = "jitter")
 
-In scatter plots, data points can sometimes overlap, making it difficult to
-discern individual observations. To address this issue, you can apply a position
-adjustment, such as `jitter`, which slightly moves the points in a random
-direction to reduce overlap.
+Hajuvusdiagrammides võivad punktid kattuda, mistõttu on raske üksikuid vaatlusi
+eristada. Selle lahendamiseks saab kasutada positsiooni kohandust `jitter`, mis
+liigutab punkte juhuslikult, et kattuvust vähendada.
 
 ```{r}
 
@@ -399,20 +389,20 @@ jittered_plot <- ggplot(Isd, aes(x = Drug, y = Diff)) +
 jittered_plot
 ```
 
-In this example, the points are `jittered` to reduce overlap, making it easier
-to see the distribution of observations within each `cut` category.
+Selles näites on punktid hajutatud, et vähendada kattuvust ja muuta vaatluste
+jaotus kategooriates paremini nähtavaks.
 
-### Adding Multiple Layers (Geoms)
+### Mitme kihi (geom-i) lisamine
 
-You can add multiple `geoms` to a single plot to create more complex
-visualizations. For example, you can combine a scatter plot with a smoothed line
-to show the overall trend, and add text labels to annotate specific data points.
+Ühele joonisele saab lisada mitu geom-i, et luua keerukamaid visualiseeringuid.
+Näiteks saab hajuvusdiagrammi kombineerida silutud joonega, mis näitab üldist
+trendi, ning lisada tekstisildid konkreetsete punktide tähistamiseks.
 
 ```{r}
-# Use the mtcars dataset as an example
+# Kasuta mtcars andmestikku näitena
 head(mtcars)
 
-# Create a scatter plot of mpg (miles per gallon) vs. wt (weight) with a smoothed line
+# Hajuvusdiagramm mpg vs. wt koos silutud joonega
 scatter_plot_smooth <- ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_point() +
   geom_smooth(formula = y ~ x, method = "loess", se = FALSE, linetype = "dashed", color = "blue") +
@@ -420,29 +410,29 @@ scatter_plot_smooth <- ggplot(mtcars, aes(x = wt, y = mpg)) +
 
 scatter_plot_smooth
 
-# Annotate specific data points with text labels
+# Märgi konkreetseid andmepunkte tekstiga
 scatter_plot_annotate <- scatter_plot_smooth +
   geom_text(data = subset(mtcars, mpg > 30 | wt > 5), 
             size = 3, hjust = 0.25, vjust = 1.5, 
             mapping = aes(label=rownames(subset(mtcars, mpg > 30 | wt > 5)))) +
-  annotate(geom = 'text', x = 5, y = 30, label="Text that I can add here", color="blue")
+  annotate(geom = 'text', x = 5, y = 30, label="Tekst, mida saan siia lisada", color="blue")
 
 scatter_plot_annotate
 ```
 
-In this example, we first created a scatter plot of `mpg` vs. `wt` and added a
-smoothed line using `geom_smooth`. Then, we annotated specific data points with
-text labels using `geom_text`. By combining multiple `geoms`, you can create
-more informative and visually appealing plots.
+Selles näites loodi esmalt hajuvusdiagramm mpg vs. wt ja lisati silutud joon
+geom_smooth abil. Seejärel märgiti konkreetseid andmepunkte tekstiga geom_text
+abil. Mitme geom-i kombineerimine võimaldab luua informatiivsemaid ja
+visuaalselt atraktiivsemaid jooniseid.
 
-### Task:
+### Ülesanne:
 
-Use the cell below to repeat the steps we have done so far. Generate a plot
-where you show `Islander_data` data by `Drug` and `Diff`. Use `geom_violin`,
-what does it show and how to interpret it? Add `geom_point` to there as well,
-make it very light (transparent), use position `jitter`. Find more options from
+Kasuta allolevat lahtrit, et korrata seni tehtud samme. Koosta joonis, kus kuvad
+`Islander_data` andmeid `Drug` ja `Diff` järgi. Kasuta `geom_violin`-it, mida
+see näitab ja kuidas seda tõlgendada? Lisa sinna ka `geom_point`, tee see väga
+heledaks (läbipaistvaks), kasuta positsiooni `jitter`. Rohkem võimalusi leiad
 [data-transformations](https://rstudio.github.io/cheatsheets/data-transformation.pdf)
-cheatsheet.
+spikrilt.
 
 ```{r fig.width=8, fig.height=6}
 
@@ -450,26 +440,23 @@ cheatsheet.
 
 ```
 
-## Scaling Numeric and Discrete Variables
+## Arvuliste ja diskreetsete muutujate skaleerimine
 
-Scaling variables allows you to transform their range, making it easier to
-visualize data that spans multiple orders of magnitude or to compare multiple
-variables with different units.
+Muutujate skaleerimine võimaldab nende väärtuste vahemikku muuta, et andmeid
+paremini visualiseerida või võrrelda erinevate ühikutega muutujaid.
 
-### Scaling Numeric Variables
+### Arvuliste muutujate skaleerimine
 
-For numeric variables, you can use `scale_x_continuous()` and
-`scale_y_continuous()` to adjust the scales of the `x` and `y` axes. The
-`mtcars` dataset, which is built into R, provides a great example for
-demonstrating this.
+Arvuliste muutujate puhul saab kasutada `scale_x_continuous()` ja
+`scale_y_continuous()` x- ja y-telje skaala muutmiseks. mtcars andmestik sobib
+hästi selle näitamiseks.
 
-Example: Log Transformation of Horsepower Let's create a scatter plot of miles
-per gallon (mpg) vs. horsepower (hp) and scale the `y` axis using log
-transformations:
+Näide: Hobujõu logaritmiline teisendus. Loome hajuvusdiagrammi mpg vs. hp ja
+skaleerime y-telje logaritmiliselt:
 
 ```{r}
 
-# Scatter plot with log-scaled y-axis using mtcars data
+# Hajuvusdiagramm logaritmilise y-teljega mtcars andmetel
 scatter_plot_scaled <- ggplot(mtcars, aes(x = mpg, y = hp)) +
   geom_point(alpha = 0.5) +
   scale_y_continuous(trans = "log10")
@@ -477,154 +464,149 @@ scatter_plot_scaled <- ggplot(mtcars, aes(x = mpg, y = hp)) +
 scatter_plot_scaled
 ```
 
-In this example, using log transformations to scale the horsepower helps reveal
-patterns in the relationship between fuel efficiency (mpg) and engine power (hp)
-that might not be apparent with the original scales.
+Selles näites aitab hobujõu logaritmiline teisendus tuua esile seoseid
+kütusesäästlikkuse (mpg) ja mootori võimsuse (hp) vahel, mis muidu võivad
+originaalskaalal varjatuks jääda.
 
-### Scaling Discrete Variables
+### Diskreetsete muutujate skaleerimine
 
-For discrete variables, you can use `scale_x_discrete()` and
-`scale_y_discrete()` to modify the order or appearance of the categories. With
-`mtcars`, we can explore how the number of cylinders (cyl) in a car affects its
-fuel efficiency (mpg).
+Diskreetsete muutujate puhul saab kasutada `scale_x_discrete()` ja
+`scale_y_discrete()` kategooriate järjekorra või välimuse muutmiseks. mtcars
+andmestikus saab uurida, kuidas silindrite arv (cyl) mõjutab kütusesäästlikkust
+(mpg).
 
-Example: Reordering Cylinder Categories by Median MPG Let's create a box plot of
-the number of cylinders vs. mpg and reorder the cylinder categories based on
-their median mpg:
+Näide: Silindrite kategooriate ümberjärjestamine mediaani mpg järgi. Loome
+kastdiagrammi silindrite arvu ja mpg kohta ning järjestame silindrite
+kategooriad mediaani mpg järgi:
 
 ```{r}
-# Calculate the median mpg for each cylinder category
+# Arvuta iga silindrite kategooria mediaan mpg
 cyl_median <- mtcars %>%
   group_by(cyl) %>%
   summarize(median_mpg = median(mpg, na.rm = TRUE)) %>%
   arrange(median_mpg)
 
-# Create a box plot with reordered cylinder categories
+# Kastdiagramm ümberjärjestatud silindrite kategooriatega
 box_plot_scaled <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   geom_boxplot() +
   scale_x_discrete(limits = factor(cyl_median$cyl)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  xlab("Number of cylinders")
+  xlab("Silindrite arv")
 
 box_plot_scaled
 ```
 
-In this example, reordering the number of cylinders based on the median miles
-per gallon helps highlight differences in fuel efficiency across different
-engine sizes. This makes it easier to compare the fuel efficiency of cars with
-varying numbers of cylinders.
+Selles näites aitab silindrite arvu ümberjärjestamine mediaani mpg järgi tuua
+esile erinevused kütusesäästlikkuses erineva mootorisuurusega autodel. See
+lihtsustab võrdlust.
 
-Scaling variables can enhance the readability of your plots and reveal hidden
-patterns in your data. By applying appropriate transformations to numeric and
-discrete variables, you can create more effective visualizations.
+Muutujate skaleerimine parandab jooniste loetavust ja aitab tuua esile varjatud
+mustreid. Õigete teisenduste rakendamine muudab visualiseeringud tõhusamaks.
 
-## Color Scaling
+## Värviskaala muutmine
 
-Color scaling can be used to visualize an additional variable in a plot, adding
-an extra dimension of information. In this revised example, we'll create a box
-plot of the number of cylinders (**`cyl`**) vs. miles per gallon (**`mpg`**),
-with the color of the points representing engine displacement (**`disp`**).
+Värviskaala abil saab joonisel visualiseerida lisamuutujat, lisades andmetesse
+täiendava mõõtme. Selles näites loome kastdiagrammi silindrite arvu (**`cyl`**)
+ja kütusesäästlikkuse (**`mpg`**) kohta, kus punktide värv näitab mootori mahtu
+(**`disp`**).
 
 ```{r}
-# Create a box plot with reordered cylinder categories and color scaling
+# Kastdiagramm ümberjärjestatud silindrite kategooriatega ja värviskaalaga
 box_plot_color_scaled <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
-  geom_boxplot(alpha = 0.4, outlier.shape = NA) +  # fill based on disp
-  geom_jitter(aes(color = disp), width = 0.3) +  # jitter points colored by disp
+  geom_boxplot(alpha = 0.4, outlier.shape = NA) +  # täitmine disp järgi
+  geom_jitter(aes(color = disp), width = 0.3) +  # hajutatud punktid värvitud disp järgi
   scale_x_discrete(limits = factor(cyl_median$cyl)) +
-  scale_color_gradient(low = "blue", high = "red") +  # gradient color for jitter points
+  scale_color_gradient(low = "blue", high = "red") +  # värviskaala punktidele
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 box_plot_color_scaled
 ```
 
-In this example, **`scale_fill_gradient`** and **`scale_color_gradient`** are
-used to adjust the color scales based on the engine displacement (**`disp`**).
-The box plots and jitter points are colored from blue (lower displacement) to
-red (higher displacement), providing an extra layer of information on top of the
-relationship between the number of cylinders and mpg.
+Selles näites kasutatakse **`scale_fill_gradient`** ja
+**`scale_color_gradient`** värviskaala muutmiseks mootori mahu (**`disp`**)
+alusel. Kastdiagrammid ja hajutatud punktid on värvitud sinisest (väiksem maht)
+punaseni (suurem maht), mis annab lisainfot silindrite arvu ja mpg seosele.
 
-By applying color scaling, you create richer visualizations that display more
-information and enhance the understanding of your data. This technique is
-particularly useful in exploring and presenting complex relationships in a
-dataset.
+Värviskaala rakendamine muudab visualiseeringud informatiivsemaks ja aitab
+paremini mõista andmete seoseid. See on eriti kasulik keerukate seoste
+avastamisel ja esitamisel.
 
-## Refactoring and Reordering Factorial Data
+## Faktorandmete ümberkodeerimine ja ümberjärjestamine
 
-Factor variables are categorical variables that can take a limited number of
-distinct values. In ggplot2, you can refactor and reorder factor variables to
-enhance your visualizations.
+Faktorid on kategoorilised muutujad, millel on piiratud arv väärtusi. ggplot2-s
+saab faktoreid ümberkodeerida ja ümber järjestada, et visualiseeringuid
+parandada.
 
-### Refactoring
+### Ümberkodeerimine
 
-Refactoring involves changing the levels of a factor variable. You can use the
-`forcats` package (part of the tidyverse) to refactor variables. The
-`fct_recode()` function can be used to recode the levels of a factor. See also
-[cheatsheet](https://rstudio.github.io/cheatsheets/factors.pdf).
+Ümberkodeerimine tähendab faktori tasemete muutmist. Selleks saab kasutada
+`forcats` paketti (kuulub tidyverse'i). Funktsioon `fct_recode()` võimaldab
+tasemeid ümber nimetada. Vaata ka
+[spikrit](https://rstudio.github.io/cheatsheets/factors.pdf).
 
 ```{r}
-# Load the required packages
+# Laadi vajalikud paketid
 # library(forcats)
 
-# # Recode the Drug variable
+# # Kodeeri Drug muutuja ümber
 Isd_refactored <- Isd %>%
   mutate(Drug_name = fct_recode(Drug,
                                 "Alprazolam" = "A",
                                 "Triazolam" = "T",
-                                "Sugar" = "S"))
+                                "Suhkur" = "S"))
 
 head(Isd_refactored)
 ```
 
-In this example, we refactored the `Drug` variable by changing the levels from
-letters to actual drug names.
+Selles näites kodeerisime `Drug` muutuja tasemed tähtedest tegelike ravimite
+nimedeks.
 
-### Reordering
+### Ümberjärjestamine
 
-Reordering involves changing the order of the levels of a factor variable. You
-can use the `fct_reorder()` function to reorder the levels of a factor based on
-the values of another variable.
+Ümberjärjestamine tähendab faktori tasemete järjekorra muutmist. Selleks saab
+kasutada `fct_reorder()` funktsiooni, mis järjestab tasemed teise muutuja
+väärtuste alusel.
 
 ```{r}
-# Create a new column with reordered genre based on the median intgross
+# Loo uus veerg, kus Drug_name on ümberjärjestatud Diff väärtuse järgi
 Isd_reordered <- Isd_refactored %>%
   mutate(Drug_reordered = fct_reorder(Drug_name, Diff, .fun = max, .desc = TRUE))
 
 head(Isd_reordered)
 ```
 
-In this example, we reordered the levels of the `Drug` variable based on the
-median value of `Diff` for each genre. This can be useful for creating plots
-where the categories are ordered meaningfully.
+Selles näites järjestati `Drug` tasemed Diff-i mediaani alusel. See on kasulik,
+kui soovid joonisel kategooriad tähenduslikult järjestada.
 
-Now let's create a bar plot of the reordered Drug_reordered with the refactored
-Drug_name variable:
+Nüüd loome tulpdiagrammi ümberjärgestatud Drug_reordered ja refactored Drug_name
+muutujaga:
 
 ```{r}
-# Create a bar plot of the reordered Drug and Happy_Sad_group variables
+# Tulpdiagramm ümberjärgestatud Drug ja Happy_Sad_group muutujatega
 bar_plot_reordered <- ggplot(Isd_reordered, aes(x = Drug_reordered, fill = Happy_Sad_group)) +
   geom_bar(position = "dodge") +
-  labs(x = "Drug (reordered)", fill = "Happy/Sad Group") +
+  labs(x = "Ravim (ümberjärgestatud)", fill = "Õnnelik/Kurb rühm") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 bar_plot_reordered
 ```
 
-In this plot, we used the refactored and reordered `Drug` variable to create a
-more informative visualization. By refactoring and reordering factor variables,
-you can enhance the readability and effectiveness of your plots.
+Selles joonises kasutasime refactored ja ümberjärgestatud Drug muutujat, et luua
+informatiivsem visualiseering. Faktorite ümberkodeerimine ja ümberjärgestamine
+parandab jooniste loetavust ja tõhusust.
 
-## Enhancing Plots with Titles, Axis Labels, Limits, and Themes
+## Jooniste täiustamine pealkirjade, teljesiltide, piiride ja teemadega
 
-Adding titles, axis labels, limits, and customizing the theme can make your
-plots more informative and visually appealing. In this section, we will
-demonstrate how to enhance a plot using these features.
+Pealkirjade, teljesiltide, piiride ja teema lisamine muudab joonised
+informatiivsemaks ja visuaalselt atraktiivsemaks. Selles osas näitame, kuidas
+joonist täiustada nende võimalustega.
 
-Let's create a scatter plot of **`Sepal.Length`** vs **`Sepal.Width`** and use
-the **`Petal.Length`** column for color scaling in the **`iris`** dataset:
+Loome hajuvusdiagrammi **`Sepal.Length`** vs **`Sepal.Width`** ja kasutame
+**`Petal.Length`** värviskaalana **`iris`** andmestikus:
 
 ```{r}
 
-# Create a scatter plot of Sepal.Length vs Sepal.Width and use Petal.Length for color scaling
+# Hajuvusdiagramm Sepal.Length vs Sepal.Width ja Petal.Length värviskaalana
 scatter_plot_example <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Petal.Length)) +
   geom_point(alpha = 0.7) +
   scale_color_continuous(low = "blue", high = "red") +
@@ -633,45 +615,43 @@ scatter_plot_example <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, colo
 scatter_plot_example
 ```
 
-### Adding Title and Axis Labels
+### Pealkirja ja teljesiltide lisamine
 
-You can add a main title, subtitle, and axis labels using the `labs()` function:
+Pealkirja, alapealkirja ja teljesilte saab lisada `labs()` funktsiooniga:
 
 ```{r}
-# Add a main title, subtitle, and axis labels
+# Lisa pealkiri, alapealkiri ja teljesildid
 scatter_plot_labeled <- scatter_plot_example +
   labs(
-    title = "Sepal Length vs. Sepal Width",
-    subtitle = "Colored by Petal Length",
-    x = "Sepal Length",
-    y = "Sepal Width",
-    color = "Petal Length"
+    title = "Õielehe pikkus vs. Õielehe laius",
+    subtitle = "Värvitud õielehe pikkuse järgi",
+    x = "Õielehe pikkus",
+    y = "Õielehe laius",
+    color = "Õielehe pikkus"
   )
 
 scatter_plot_labeled
 ```
 
-### Setting Axis Limits
+### Telje piiride määramine
 
-To set the limits for the x and y axes, you can use the `xlim()` and `ylim()`
-functions:
+x- ja y-telje piirid saab määrata `xlim()` ja `ylim()` funktsioonidega:
 
 ```{r}
-# Set the limits for the x and y axes
+# Määra x- ja y-telje piirid
 scatter_plot_limited <- scatter_plot_labeled +
   xlim(4, 8) +
   ylim(2, 4) + 
   geom_point(mapping = aes(size = Petal.Width), alpha=0.4) +
-  labs(size = 'Petal Width')
+  labs(size = 'Õielehe laius')
 
 scatter_plot_limited
 ```
 
-### Customizing the Theme
+### Teema kohandamine
 
-You can customize the appearance of your plot by modifying the theme. The
-`theme()` function allows you to change various aspects of the plot, such as
-text size, font, background colors, and grid lines:
+Joonise välimust saab muuta teema abil. `theme()` funktsioon võimaldab muuta
+erinevaid joonise osi, nt teksti suurust, fonti, taustavärve ja ruudustikku:
 
 ```{r}
 scatter_plot_custom_theme <- scatter_plot_limited +
@@ -688,24 +668,22 @@ scatter_plot_custom_theme <- scatter_plot_limited +
 scatter_plot_custom_theme
 ```
 
-By adding titles, axis labels, limits, and customizing the theme, you can create
-more informative and visually appealing plots that effectively communicate your
-data's story. See
-[cheatsheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf) for
-additional themes.
+Pealkirjade, teljesiltide, piiride ja teema lisamine muudab joonised
+informatiivsemaks ja visuaalselt atraktiivsemaks. Vaata
+[spikrit](https://rstudio.github.io/cheatsheets/data-visualization.pdf)
+lisateemade jaoks.
 
-## Exporting and Saving Plots with ggsave
+## Jooniste eksportimine ja salvestamine ggsave abil
 
-`ggsave()` is a convenient function for saving your ggplot2 plots in various
-file formats, such as PNG, PDF, SVG, or TIFF. Using `ggsave()`, you can easily
-save high-quality versions of your plots for use in reports, presentations, or
-publications.
+`ggsave()` on mugav funktsioon ggplot2 jooniste salvestamiseks erinevates
+failiformaatides, nt PNG, PDF, SVG või TIFF. `ggsave()` abil saab hõlpsalt
+salvestada kvaliteetseid jooniseid raportitesse, esitlustesse või
+publikatsioonidesse.
 
-To save this plot as a high-quality PNG image, you can use the `ggsave()`
-function:
+Joonise salvestamiseks PNG-failina kasuta `ggsave()` funktsiooni:
 
 ```{r}
-# Save the plot as a PNG file
+# Salvesta joonis PNG-failina
 ggsave(
   filename = "scatter_plot_example.png",
   plot = scatter_plot_example,
@@ -715,18 +693,16 @@ ggsave(
 )
 ```
 
-In this example, we saved the `scatter_plot_example` plot as a PNG file with a
-width of 8 inches, a height of 5 inches, and a resolution of 300 dots per inch
-(DPI). You can adjust the `width`, `height`, and `dpi` parameters to control the
-size and quality of the saved image. Here `plot =` argument may be optional --
-if plot is not assigned it will by default take the last active plot.
+Selles näites salvestasime `scatter_plot_example` joonise PNG-failina laiusega 8
+tolli, kõrgusega 5 tolli ja resolutsiooniga 300 DPI. `width`, `height` ja `dpi`
+parameetreid saab muuta pildi suuruse ja kvaliteedi määramiseks. Kui `plot =`
+argumenti pole, salvestatakse vaikimisi viimane aktiivne joonis.
 
-To save the plot in a different file format, you can change the file extension
-in the `filename` parameter. For example, to save the plot as a PDF, you can
-use:
+Teise failiformaadi jaoks muuda failinime laiendit. Näiteks PDF-i
+salvestamiseks:
 
 ```{r}
-# Save the plot as a PDF file
+# Salvesta joonis PDF-failina
 ggsave(
   filename = "scatter_plot_custom_theme.pdf",
   plot = scatter_plot_custom_theme,
@@ -735,63 +711,62 @@ ggsave(
 )
 ```
 
-By using `ggsave()`, you can easily export and save your ggplot2 plots in a
-variety of file formats to share or include in your documents.
+`ggsave()` abil saab ggplot2 jooniseid hõlpsalt eksportida ja salvestada
+erinevates failiformaatides, et neid jagada või dokumentidesse lisada.
 
-## Combining Multiple Plots with patchwork
+## Mitme joonise kombineerimine patchwork paketiga
 
-The `patchwork` package allows you to easily combine multiple ggplot2 plots into
-a single layout. This can be useful for comparing different visualizations side
-by side or creating more complex visualizations.
+`patchwork` pakett võimaldab ggplot2 jooniseid lihtsalt ühte paigutusse
+kombineerida. See on kasulik erinevate visualiseeringute kõrvutamiseks või
+keerukamate jooniste loomiseks.
 
-First, let's create some example plots using the `mtcars` dataset:
+Loome esmalt mõned näidisjoonised mtcars andmestiku põhjal:
 
 ```{r}
-# Load the required packages
+# Laadi vajalikud paketid
 library(ggplot2)
 library(patchwork)
 
-# Create a scatter plot of mpg vs. wt
+# Hajuvusdiagramm mpg vs. wt
 scatter_plot <- ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_point(aes(color = cyl)) +
-  labs(title = "Miles per Gallon vs. Weight", x = "Weight (1000 lbs)", y = "Miles per Gallon", color = "Cylinders") +
+  labs(title = "Kütusesäästlikkus vs. kaal", x = "Kaal (1000 lbs)", y = "Kütusesäästlikkus", color = "Silindrid") +
   theme_minimal()
 
-# Create a bar plot of the number of cars per number of cylinders
+# Tulpdiagramm autode arvust silindrite kaupa
 bar_plot <- ggplot(mtcars, aes(x = factor(cyl))) +
   geom_bar(aes(fill = factor(cyl))) +
-  labs(title = "Number of Cars per Number of Cylinders", x = "Number of Cylinders", y = "Count", fill = "Cylinders") +
+  labs(title = "Autode arv silindrite kaupa", x = "Silindrite arv", y = "Arv", fill = "Silindrid") +
   theme_minimal()
 
-# Create a box plot of mpg per number of cylinders
+# Kastdiagramm mpg silindrite kaupa
 box_plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   geom_boxplot(aes(fill = factor(cyl))) +
-  labs(title = "Miles per Gallon per Number of Cylinders", x = "Number of Cylinders", y = "Miles per Gallon", fill = "Cylinders") +
+  labs(title = "Kütusesäästlikkus silindrite kaupa", x = "Silindrite arv", y = "Kütusesäästlikkus", fill = "Silindrid") +
   theme_minimal() # + theme(legend.position = "None")
 ```
 
-Now, let's use the `patchwork` package to combine these plots:
+Nüüd kombineerime joonised patchwork paketiga:
 
 ```{r}
-# Combine the plots using patchwork
+# Kombineeri joonised patchwork abil
 combined_plot <- scatter_plot + bar_plot + box_plot + plot_layout(ncol = 1)
 combined_plot
 ```
 
-In this example, we combined the three plots into a single column layout. You
-can adjust the layout by changing the `ncol` and `nrow` parameters in the
-`plot_layout()` function.
+Selles näites kombineerisime kolm joonist ühte veergu. Paigutust saab muuta
+`ncol` ja `nrow` parameetritega `plot_layout()` funktsioonis.
 
-To collect the legends and add a global title, subtitle, and caption, you can
-use the `plot_annotation()` function:
+Legendide kogumiseks ja globaalse pealkirja, alapealkirja ning allkirja
+lisamiseks kasuta `plot_annotation()` funktsiooni:
 
 ```{r fig.height=8, fig.width=10}
-# Collect legends and add global title, subtitle, and caption
+# Kogu legendid ja lisa globaalne pealkiri, alapealkiri ja allkiri
 combined_plot_annotated <- scatter_plot / (bar_plot + box_plot) +
   plot_annotation(
-    title = "Exploring the mtcars Dataset",
-    subtitle = "Scatter plot, bar plot, and box plot",
-    caption = "Data source: mtcars",
+    title = "mtcars andmestiku uurimine",
+    subtitle = "Hajuvusdiagramm, tulpdiagramm ja kastdiagramm",
+    caption = "Andmeallikas: mtcars",
     tag_levels = 'A'
   ) +
   plot_layout(guides = "collect")
@@ -799,19 +774,19 @@ combined_plot_annotated <- scatter_plot / (bar_plot + box_plot) +
 combined_plot_annotated
 ```
 
-By using the `patchwork` package, you can combine multiple ggplot2 plots into a
-single layout, making it easier to compare and present your visualizations.
+patchwork paketiga saab mitut ggplot2 joonist ühte paigutusse kombineerida, mis
+lihtsustab visualiseeringute võrdlemist ja esitamist.
 
-### Task:
+### Ülesanne:
 
-Now it's your time to shine. Let your imagination fly and explore the Islander
-example dataset. Come up with your own visualisation. Use as many plots, as many
-colours and themes as you see fit. Start building it gradually, this makes
-finding and identifying errors easier. You can even take your own data and
-explore it. But try to get to a publishing ready image (*sans* figure legend).
+Nüüd on sinu kord särada. Lase fantaasial lennata ja uuri Islander
+näidisandmestikku. Koosta oma visualiseering. Kasuta nii palju jooniseid, värve
+ja teemasid, kui soovid. Alusta järk-järgult, nii on vigu lihtsam leida ja
+parandada. Võid kasutada ka oma andmeid. Proovi jõuda avaldamiskõlbliku
+kujutiseni (*ilma* legendita).
 
-Explore more options from various
-[cheatsheets](https://posit.co/resources/cheatsheets/).
+Uuri rohkem võimalusi erinevatelt
+[spikritelt](https://posit.co/resources/cheatsheets/).
 
 ```{r}
 
@@ -819,9 +794,9 @@ Explore more options from various
 
 ```
 
-#### Bonus
+#### Boonus
 
-Explore
+Uuri
 ['esquisse'](https://cran.r-project.org/web/packages/esquisse/vignettes/get-started.html)
-package for interactive plot building. It starts a shiny app to allow
-drag-and-drop graph building.
+paketti interaktiivseks jooniste koostamiseks. See käivitab shiny rakenduse, mis
+võimaldab graafikuid lohistades ehitada.
