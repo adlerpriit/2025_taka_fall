@@ -68,7 +68,8 @@ max(c(1, 2, 3, 4, 5))
 
 # funktsioon nimeliste argumentidega
 my_sum <- function(a, b=NULL) {
-  return(a + b)
+  r = a + b
+  return(r)
 }
 my_sum(5, 7)
 ```
@@ -116,7 +117,9 @@ meelelahutus. Arvesta, et "scope" töötab samuti nagu `pythonis`.
 
 ```{r}
 
-
+total_party_cost <- function(n=10) { # n - osalejate arv
+  
+}
 
 ```
 
@@ -169,7 +172,8 @@ print(df)
 l <- list(
   name = "Alice",
   age = c(25, 30),
-  city = c("New York", "San Francisco", "Los Angeles")
+  city = c("New York", "San Francisco", "Los Angeles"),
+  last_df = df
 )
 print(l)
 ```
@@ -319,7 +323,7 @@ data <- tibble(
   YourVariable = rnorm(100, mean = 50, sd = 10),
   YourOtherVariable = rnorm(100, mean = 20, sd = 2)
 )
-head(data)
+data
 ```
 
 ### Olulised dplyr funktsioonid
@@ -370,7 +374,7 @@ järjekorda.
 ```{r}
 # Järjesta andmed YourVariable järgi kasvavalt
 data %>%
-  arrange(YourVariable) %>%
+  arrange(desc(YourCategory), YourVariable) %>%
   head()
 
 # Järjesta kahanevalt
