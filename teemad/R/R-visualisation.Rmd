@@ -93,22 +93,22 @@ Andmestiku kirjeldus
 Lihtsaim viis andmete lugemiseks on kasutada `read_csv` käsku:
 
 ```{r}
-Isd <- read_csv('data/Islander_data.csv')
+Isd <- read_csv('../../data/Islander_data.csv')
 
 Isd
 ```
 
 # Andmete kõrgetasemeline ülevaade tidyverse toru-operaatoritega ('pipe', `%>%`)
 
-Tidyverse toru-operaatorid, mida tähistab `%>%` \<ctrl+shift+M\>, võimaldavad mitut
-funktsiooni järjestada selgelt ja loetavalt. Toru-operaator võtab ühe funktsiooni
-väljundi ja annab selle järgmise funktsiooni sisendiks, muutes andmetöötluse
-järjestuse lihtsasti jälgitavaks.
+Tidyverse toru-operaatorid, mida tähistab `%>%` \<ctrl+shift+M\>, võimaldavad
+mitut funktsiooni järjestada selgelt ja loetavalt. Toru-operaator võtab ühe
+funktsiooni väljundi ja annab selle järgmise funktsiooni sisendiks, muutes
+andmetöötluse järjestuse lihtsasti jälgitavaks.
 
-Järgmises näites kasutame toru-operaatorit, et teha järjestikuseid toiminguid: 1.
-Rühmitame andmed kategooria järgi (`group_by`) 2. Arvutame iga rühma kohta
-kokkuvõtlikud näitajad (`summarize`) 3. Sorteerime tulemused kindla näitaja
-järgi (`arrange`)
+Järgmises näites kasutame toru-operaatorit, et teha järjestikuseid
+toiminguid: 1. Rühmitame andmed kategooria järgi (`group_by`) 2. Arvutame iga
+rühma kohta kokkuvõtlikud näitajad (`summarize`) 3. Sorteerime tulemused kindla
+näitaja järgi (`arrange`)
 
 ```{r include=FALSE}
 # Loome näidisandmestiku
@@ -194,7 +194,7 @@ andmed, esteetikad, geomid, skaalad ja teemad.
 1.  **data**: Iga joonise alus. Määrad, millist andmestikku soovid
     visualiseerida.
 
-2.  **aesthetics**: Esteetikad on joonise visuaalsed omadused, nagu x- ja
+2.  **aesthetics(aes)**: Esteetikad on joonise visuaalsed omadused, nagu x- ja
     y-telg, värv, suurus, kuju ja läbipaistvus. Määrad, millised muutujad
     andmestikust vastavad millistele esteetikatele.
 
@@ -207,8 +207,8 @@ andmed, esteetikad, geomid, skaalad ja teemad.
     esteetilisteks omadusteks. Näiteks värvid, suurused või kujundid. Skaalasid
     saab kohandada joonise välimuse muutmiseks.
 
-5.  **theme**: Kujundab joonise mitte-andmelisi aspekte, nagu taust,
-    ruudustik, telgede sildid ja legend. Kujundust (`theme`) muutes saab joonise välimust
+5.  **theme**: Kujundab joonise mitte-andmelisi aspekte, nagu taust, ruudustik,
+    telgede sildid ja legend. Kujundust (`theme`) muutes saab joonise välimust
     muuta.
 
 ggplot2 modulaarse lähenemise puhul alustad andmete ja esteetikate määramisest,
@@ -227,6 +227,16 @@ plot <- ggplot(data = iris %>% filter(Petal.Length > 4), aes(x = Sepal.Length, y
 
 # Kuvab joonise
 plot
+```
+
+```{r}
+
+iris %>% 
+  filter(Petal.Length > 4) %>% 
+  ggplot(aes(x=Sepal.Length, y=Sepal.Width, color=Petal.Length)) + 
+  geom_point() + 
+  scale_color_continuous(low='blue', high='red') + 
+  theme_minimal()
 ```
 
 Selles näites määrame esmalt andmed ja esteetikad, lisame punktgeom-i, kohandame
@@ -293,7 +303,7 @@ ja y-koordinaatidele. Kasulik mustrite, trendide või erandite leidmiseks.
 
 ```{r fig.width=6, fig.height=6}
 # Kasuta Islander andmestikku näitena
-head(Isd)
+# head(Isd)
 
 # Hajuvusdiagramm mälu skoorist enne ja pärast ravimi võtmist
 scatter_plot <- ggplot(Isd, aes(x = Mem_Score_Before, y = Mem_Score_After)) +
@@ -459,7 +469,7 @@ skaleerime y-telje logaritmiliselt:
 # Hajuvusdiagramm logaritmilise y-teljega mtcars andmetel
 scatter_plot_scaled <- ggplot(mtcars, aes(x = mpg, y = hp)) +
   geom_point(alpha = 0.5) +
-  scale_y_continuous(trans = "log10")
+  scale_y_log10()
 
 scatter_plot_scaled
 ```
@@ -485,6 +495,8 @@ cyl_median <- mtcars %>%
   group_by(cyl) %>%
   summarize(median_mpg = median(mpg, na.rm = TRUE)) %>%
   arrange(median_mpg)
+
+cyl_median
 
 # Kastdiagramm ümberjärjestatud silindrite kategooriatega
 box_plot_scaled <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
@@ -546,7 +558,7 @@ tasemeid ümber nimetada. Vaata ka
 
 ```{r}
 # Laadi vajalikud paketid
-# library(forcats)
+library(forcats)
 
 # # Kodeeri Drug muutuja ümber
 Isd_refactored <- Isd %>%
@@ -685,8 +697,8 @@ Joonise salvestamiseks PNG-failina kasuta `ggsave()` funktsiooni:
 ```{r}
 # Salvesta joonis PNG-failina
 ggsave(
-  filename = "scatter_plot_example.png",
-  plot = scatter_plot_example,
+  filename = "scatter_plot_custom_theme.png",
+  plot = scatter_plot_custom_theme,
   width = 8,
   height = 5,
   dpi = 300
@@ -705,7 +717,6 @@ salvestamiseks:
 # Salvesta joonis PDF-failina
 ggsave(
   filename = "scatter_plot_custom_theme.pdf",
-  plot = scatter_plot_custom_theme,
   width = 8,
   height = 5
 )
@@ -724,7 +735,7 @@ Loome esmalt mõned näidisjoonised mtcars andmestiku põhjal:
 
 ```{r}
 # Laadi vajalikud paketid
-library(ggplot2)
+# library(ggplot2)
 library(patchwork)
 
 # Hajuvusdiagramm mpg vs. wt
@@ -743,7 +754,7 @@ bar_plot <- ggplot(mtcars, aes(x = factor(cyl))) +
 box_plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   geom_boxplot(aes(fill = factor(cyl))) +
   labs(title = "Kütusesäästlikkus silindrite kaupa", x = "Silindrite arv", y = "Kütusesäästlikkus", fill = "Silindrid") +
-  theme_minimal() # + theme(legend.position = "None")
+  theme_minimal() + theme(legend.position = "None")
 ```
 
 Nüüd kombineerime joonised patchwork paketiga:
