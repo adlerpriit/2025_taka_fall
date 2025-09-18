@@ -8,4 +8,4 @@ Siin kataloogis on kolm Jupyter notebooki, mis tutvustavad Pythonit ja selle kas
 
 Oma kursuse repo jaoks võta kõik notebookid ja lisa need oma GitHubi reposse. Peale seda kui oled need oma reposse lisanud (teinud sellekohase commiti), siis käi need läbi ja proovi ise koodi kirjutada ja teste lanendada, kirjuta testide vastused eraldi 'cell'-i.
 
-Vaata ka [data](../data) kataloogi, kus on mõned andmestik, mida peaksid nende notebookide harjutustes kasutama.
+Vaata ka [data](../../data) kataloogi, kus on mõned andmestik, mida peaksid nende notebookide harjutustes kasutama.
