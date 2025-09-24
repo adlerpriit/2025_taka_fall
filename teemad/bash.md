@@ -164,6 +164,10 @@ Vaheta katalooge, liigud failisüsteemis ringi.
   cd /var/log
   ```
 
+#### Automaatne täitmine (`tab` completion)
+
+Bash toetab automaatset täitmist, mis võimaldab sul kiiresti sisestada failide ja kataloogide nimesid, vajutades `Tab` klahvi. Kui hakkad kirjutama faili või katalooge nime ja vajutad `Tab`, proovib Bash automaatselt täita nime, kui see on ainulaadne. Kui on mitu võimalikku täiendust, näitab Bash sulle valikuid.
+
 #### Absoluutne vs suhteline tee (path)
 
 - **Absoluutne tee** algab alati juurkataloogist (`/` või Windowsis draivitähega) ja näitab täpset asukohta failisüsteemis.
