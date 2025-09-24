@@ -573,7 +573,7 @@ grep -A 3 "^##" $(find . -name "*.md")
 
 Need tööriistad on eriti võimsad, kui neid kombineerida!
 
-## Andmete töötlemine: sort, uniq, wc, cut, head, tail ja toru (pipe)
+### Andmete töötlemine: sort, uniq, wc, cut, head, tail ja toru (pipe)
 
 Bash-is saab töödelda tekstifaile ja andmeid väga tõhusalt, kasutades erinevaid käske ning nende ühendamist toru (`|`) abil. Järgnevalt tutvustame olulisemaid tööriistu ja näitame, kuidas neid kasutada näiteks `Islander_data.csv` failiga.
 
@@ -1010,7 +1010,7 @@ alias gs='git status'
 See on vaid algus. Kui Bash-is mugavamaks muutud, avastad veel palju käske ja võimalusi.
 
 
-# Ülesanne
+## Ülesanne
 
 Kasutades ülaltoodud käske:
 1. Navigeeri oma arvutis kataloogi, kus asub sinu kohalik kursuse git repositoorium.
