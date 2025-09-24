@@ -1014,6 +1014,11 @@ alias gs='git status'
 See on vaid algus. Kui Bash-is mugavamaks muutud, avastad veel palju käske ja võimalusi.
 
 
+### Veel üks viide:
+
+- [Unix First Steps Training](https://github.com/sib-swiss/unix-first-steps-training)
+  Vaata läbi `.pdf` esitlus, kui sulle meeldivad värvilised slaidid on see just sulle!
+
 ## Ülesanne
 
 Kasutades ülaltoodud käske:
