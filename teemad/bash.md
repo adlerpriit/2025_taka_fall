@@ -730,6 +730,175 @@ curl -O http://example.com/fail.txt
   ```
 - `-C -` jätkab katkestatud allalaadimist.
 
+### Faili- ja kataloogiteave
+
+---
+
+| Käsk        | Kirjeldus                            | Näide kasutusest                  |
+|-------------|--------------------------------------|-----------------------------------|
+| `basename`  | Võta failinimi rajast                | `basename /tee/fail.txt`          |
+| `dirname`   | Võta kataloogi tee täisrajast        | `dirname /tee/fail.txt`           |
+| `xargs`     | Koosta ja käivita käsuread stdin-ist | `echo 'fail1 fail2' \| xargs rm`  |
+
+
+#### Skripti loomine ja käivitamine
+Bash-skriptid võimaldavad automatiseerida korduvaid käsurea toiminguid. Skript on tavaline tekstifail, mille igal real on käsurea käsk.
+
+1. Loo uus fail, näiteks `minu_skript.sh`.
+2. Faili alguses kasuta shebang-rida, mis ütleb, millise tõlgendajaga skripti käivitada:
+   ```
+   #!/bin/bash
+   ```
+3. Lisa käsud, üks igale reale.
+4. Muuda skript käivitatavaks:
+   ```
+   chmod +x minu_skript.sh
+   ```
+5. Käivita skript:
+   ```
+   ./minu_skript.sh
+   ```
+
+#### Näide skriptist
+
+```bash
+#!/bin/bash
+echo "Tere, maailm!"
+```
+
+#### `basename` ja `dirname` skriptides
+
+- `basename` — eemaldab failiteest kataloogiosa, jättes alles ainult failinime.
+- `dirname` — eemaldab failiteest failinime, jättes alles ainult kataloogi.
+
+Näide:
+```bash
+failitee="/home/kasutaja/andmed/fail.txt"
+echo "Failinimi: $(basename "$failitee")"
+echo "Kataloog: $(dirname "$failitee")"
+echo "Failinimi ilma laiendita: $(basename "$failitee" .txt)"
+```
+
+#### if-klausel ja tingimused
+
+Bash-is saab kasutada `if`-klauslit, et teha otsuseid skriptis.
+
+**Üldine süntaks:**
+```bash
+if [ tingimus ]; then
+  # käsud kui tingimus tõene
+else
+  # käsud kui tingimus väär
+fi
+```
+
+**Levinumad testid:**
+- Faili olemasolu: `[ -f fail.txt ]` (fail olemas ja on tavaline fail)
+- Kataloogi olemasolu: `[ -d kataloog ]`
+- Fail on tühi: `[ -s fail.txt ]`
+- Stringide võrdlus: `[ "$a" = "$b" ]`
+- Arvude võrdlus: `[ "$a" -eq "$b" ]`, `[ "$a" -gt "$b" ]`, `[ "$a" -lt "$b" ]`
+- Mitme tingimuse ühendamine: `[ -f fail.txt ] && [ -s fail.txt ]`
+
+**Näide:**
+```bash
+if [ -f "$1" ]; then
+  echo "Fail $1 on olemas"
+else
+  echo "Faili $1 ei leitud"
+fi
+```
+
+#### Käsurea argumendid bash-skriptidele
+
+Skriptile saab anda argumente, mis on saadaval muutujatena `$1`, `$2`, ... (`$0` on skripti nimi, `$@` kõik argumendid). Argumentide eraldamine toimub tühikute abil, argumendid, mis sisaldavad tühikuid, tuleb panna jutumärkidesse.
+
+**Näide:**
+```bash
+#!/bin/bash
+echo "Esimene argument: $1"
+echo "Teine argument: $2"
+```
+Käivita:
+```
+./minu_skript.sh foo bar
+```
+Väljund:
+```
+Esimene argument: foo
+Teine argument: bar
+```
+
+**Kõik argumendid tsüklis:**
+See näide võimaldab sul ise argumendid töödelda ja ostustada, mida nendega teha:
+```bash
+for arg in "$@"; do
+  if [ -f "$arg" ]; then
+    echo "$arg  - Fail on olemas"
+  else
+    echo "Argument: $arg - ei ole fail"
+  fi
+done
+```
+
+#### Argumentide parsimine getopts abil (POSIX stiil)
+
+Kui soovid toetada lühikesi lippe (nt `-f fail`), kasuta `getopts`:
+
+**Näide:**
+```bash
+while getopts "f:v" opt; do
+  case $opt in
+    f) failinimi="$OPTARG" ;;
+    v) verbose=1 ;;
+    *) echo "Kasutus: $0 [-f fail] [-v]"; exit 1 ;;
+  esac
+done
+echo "Fail: $failinimi"
+echo "Verbose: $verbose"
+```
+Käivita:
+```
+./minu_skript.sh -f andmed.txt -v
+```
+
+**Selgitus:**
+- `"f:v"` — `-f` vajab väärtust, `-v` on lipp.
+- `$OPTARG` — argumendi väärtus.
+- `$OPTIND` — järgmise argumendi indeks.
+
+---
+
+### Faili- ja kataloogiteave skriptides
+
+- `basename` ja `dirname` on kasulikud, kui töötled failiteid skriptis (vt eespool).
+- `xargs` kasutatakse sageli torude ja massoperatsioonide puhul, nt:
+  ```
+  find . -name "*.txt" | xargs rm
+  ```
+  Kuid skriptides on tihti mugavam kasutada tsüklit:
+  ```bash
+  for fail in *.txt; do
+    rm "$fail"
+  done
+  ```
+  Teine näide muuta tsükli abil kõik `.txt` failid `.md` failideks:
+  ```bash
+  for fail in *.txt; do
+    mv "$fail" "$(dirname "$fail")/$(basename "$fail" .txt).md"
+  done
+  ```
+
+### Bash-i muutujad ja keskkond
+
+| Käsk      | Kirjeldus                              | Näide kasutusest                  |
+|-----------|----------------------------------------|-----------------------------------|
+| `env`     | Näita keskkonnamuutujaid               | `env`                             |
+| `export`  | Sea keskkonnamuutuja                   | `export MUUTUJA=väärtus`          |
+| `alias`   | Loo käsule lühend                      | `alias ll='ls -la'`               |
+| `unalias` | Eemalda lühend                         | `unalias ll`                      |
+| `which`   | Leia käsu asukoht                      | `which python`                    |
+| `source`  | Käivita käsud failist praeguses shellis| `source skript.sh`                |
 
 ### Arhiveerimine ja pakkimine
 
@@ -753,25 +922,6 @@ curl -O http://example.com/fail.txt
 | `uptime`  | Näita, kui kaua süsteem on töötanud    | `uptime`                          |
 | `history` | Näita käskude ajalugu                  | `history`                         |
 | `sudo`    | Käivita käsk superkasutaja õigustes    | `sudo apt update`                 |
-
-### Bash-i muutujad ja keskkond
-
-| Käsk      | Kirjeldus                              | Näide kasutusest                  |
-|-----------|----------------------------------------|-----------------------------------|
-| `env`     | Näita keskkonnamuutujaid               | `env`                             |
-| `export`  | Sea keskkonnamuutuja                   | `export MUUTUJA=väärtus`          |
-| `alias`   | Loo käsule lühend                      | `alias ll='ls -la'`               |
-| `unalias` | Eemalda lühend                         | `unalias ll`                      |
-| `which`   | Leia käsu asukoht                      | `which python`                    |
-| `source`  | Käivita käsud failist praeguses shellis| `source skript.sh`                |
-
-### Faili- ja kataloogiteave
-
-| Käsk        | Kirjeldus                            | Näide kasutusest                  |
-|-------------|--------------------------------------|-----------------------------------|
-| `basename`  | Võta failinimi rajast                | `basename /tee/fail.txt`          |
-| `dirname`   | Võta kataloogi tee täisrajast        | `dirname /tee/fail.txt`           |
-| `xargs`     | Koosta ja käivita käsuread stdin-ist | `echo 'fail1 fail2' \| xargs rm`  |
 
 ### Terminali töö
 
@@ -797,4 +947,3 @@ Kõik skriptid peaks olema 'scripts' kataloogis, andmed 'data' kataloogis ja tul
 5. Kasutades oma lemmiks tekstiredaktorit kirjuta script nimega `generate_data.sh`, mis käivitab `generate_data.py` faili 10 korda ja salvestab tulemused `data` kataloogi. Faili nimed võiks olla `data1.txt`, `data2.txt` jne.
 6. Üle kõikide `data` kataloogi failide leia mitu korda igat unikaalset arvu esineb (kasutades `cat`, `sort`, `uniq` käske) - salvesta tulemused faili `results/summary.txt`.
 7. Muuda `readme.md` faili, lisades sinna lühikese kirjelduse oma bash eksperimendist (kasutades `nano` või `vim`).
-
