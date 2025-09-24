@@ -661,8 +661,18 @@ Näitavad faili algust või lõppu.
   tail -n +2 data/Islander_data.csv | cut -d, -f6 | sort | uniq
   ```
 
-**Kokkuvõte:**  
-Kombineerides neid käske toruga (`|`), saab väga kiiresti ja paindlikult töödelda suuri tekstifaile ja andmestikke ilma eraldi programmita.
+Kombineerides neid käske toruga (`|`), saab väga kiiresti ja paindlikult töödelda suuri tekstifaile ja andmestikke ilma eraldi programmita. Näiteks:
+```bash
+find data/ -type f -name "*.txt" | grep "2024" | xargs cat | sort | uniq -c | sort -nr | head -n 10
+```
+See käsk:
+- leiab kõik `.txt` failid kataloogis `data/`, 
+- filtreerib failinimed, mis sisaldavad "2024",
+- ühendab nende sisu,
+- loendab unikaalsete ridade esinemised,
+- sorteerib sageduse järgi ja
+- näitab 10 kõige sagedasemat rida.
+
 
 
 ### Failide ja andmete liigutamine võrgus
@@ -743,6 +753,25 @@ curl -O http://example.com/fail.txt
 
 #### Skripti loomine ja käivitamine
 Bash-skriptid võimaldavad automatiseerida korduvaid käsurea toiminguid. Skript on tavaline tekstifail, mille igal real on käsurea käsk.
+
+**Miks skriptimine on oluline?**
+- Skriptid võimaldavad töövoogude automatiseerimist, mis tagab töö korduvuse (reproducibility), vähendab käsitsi tehtavaid vigu ja muudab töövood dokumenteerituks.
+- Skripte saab jagada kolleegidega, mis lihtsustab koostööd ja tulemuste taasesitamist.
+- Hästi kirjutatud skriptid on loetavad ja hooldatavad ka hiljem.
+
+**Skriptide dokumenteerimine ja stiil:**
+- Lisa alati skripti algusesse kommentaarid, mis kirjeldavad skripti eesmärki, autorit, kuupäeva ja kasutusjuhendit.
+- Kasuta selgeid ja kirjeldavaid muutujanimesid.
+- Lisa kommentaare (`#`), et selgitada keerulisemaid kohti.
+- Näide:
+  ```bash
+  #!/bin/bash
+  # Skripti nimi: andmete_töötleja.sh
+  # Autor: Mari Maasikas
+  # Kuupäev: 2024-06-01
+  # Kirjeldus: Töötleb andmefaile ja annab kokkuvõtte.
+  # Kasutamine: ./andmete_töötleja.sh sisendfail.txt
+  ```
 
 1. Loo uus fail, näiteks `minu_skript.sh`.
 2. Faili alguses kasuta shebang-rida, mis ütleb, millise tõlgendajaga skripti käivitada:
@@ -869,7 +898,7 @@ Käivita:
 
 ---
 
-### Faili- ja kataloogiteave skriptides
+#### Faili- ja kataloogiteave skriptides
 
 - `basename` ja `dirname` on kasulikud, kui töötled failiteid skriptis (vt eespool).
 - `xargs` kasutatakse sageli torude ja massoperatsioonide puhul, nt:
@@ -889,7 +918,40 @@ Käivita:
   done
   ```
 
+#### Veakäsitlus skriptides
+- Kasuta `set -e`, et skript katkestaks kohe, kui mõni käsk annab veakoodi.
+- Kasuta `trap`-i, et teha midagi vea korral (nt puhastada ajutised failid või anda veateade).
+- Kontrolli käsu lõppemise staatust `$?` või kasuta tingimuslauseid.
+- Näide:
+  ```bash
+  #!/bin/bash
+  set -e
+  trap 'echo "Tekkis viga real $LINENO"; exit 1' ERR
+
+  if [ ! -f "$1" ]; then
+    echo "Fail puudub: $1"
+    exit 1
+  fi
+  # ...edasi töötlus...
+
+  cat $1 $2 > ühendatud.txt
+  if [ $? -eq 0 ]; then
+    echo "Failide ühendamine õnnestus"
+  else
+    echo "Failide ühendamine ebaõnnestus"
+    exit 1
+  fi
+  ```
+
+#### Viited, kui jäi väheks:
+
+- [Bash Guide for Beginners](https://tldp.org/LDP/Bash-Beginners-Guide/html/)
+- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
+- [Bash Hackers Wiki](https://bash-hackers.gabe565.com/)
+
 ### Bash-i muutujad ja keskkond
+
+---
 
 | Käsk      | Kirjeldus                              | Näide kasutusest                  |
 |-----------|----------------------------------------|-----------------------------------|
@@ -899,6 +961,20 @@ Käivita:
 | `unalias` | Eemalda lühend                         | `unalias ll`                      |
 | `which`   | Leia käsu asukoht                      | `which python`                    |
 | `source`  | Käivita käsud failist praeguses shellis| `source skript.sh`                |
+
+- Keskkonnamuutujad (nt PATH) mõjutavad, milliseid käske ja skripte saab otse käsurealt käivitada.
+- Kui soovid oma skriptid teha käivitatavaks igast kataloogist, lisa nende asukoht PATH-i:
+  ```bash
+  export PATH="$PATH:/home/kasutaja/minu_skriptid"
+  ```
+- Lisa see rida oma `~/.bashrc` faili, et muudatus kehtiks alati.
+- Kontrolli PATH-i väärtust käsuga `echo $PATH`.
+
+Samuti saad `~/.bashrc` faili lisada oma lemmikkäsud lühenditena (alias):
+```bash
+alias ll='ls -la'
+alias gs='git status'
+```
 
 ### Arhiveerimine ja pakkimine
 
@@ -944,6 +1020,10 @@ Kasutades ülaltoodud käske:
 Kõik skriptid peaks olema 'scripts' kataloogis, andmed 'data' kataloogis ja tulemused 'results' kataloogis.
 
 4. Kasutades `nano` editori kirjuta script nimega `generate_data.py`, mis genereerib 200 juhuslikku täisarvu (vahemikus 1..100).
-5. Kasutades oma lemmiks tekstiredaktorit kirjuta script nimega `generate_data.sh`, mis käivitab `generate_data.py` faili 10 korda ja salvestab tulemused `data` kataloogi. Faili nimed võiks olla `data1.txt`, `data2.txt` jne.
-6. Üle kõikide `data` kataloogi failide leia mitu korda igat unikaalset arvu esineb (kasutades `cat`, `sort`, `uniq` käske) - salvesta tulemused faili `results/summary.txt`.
-7. Muuda `readme.md` faili, lisades sinna lühikese kirjelduse oma bash eksperimendist (kasutades `nano` või `vim`).
+5. Kasutades oma lemmiks tekstiredaktorit kirjuta script nimega `generate_data.sh`, mis käivitab `generate_data.py` faili N (N=10) korda ja salvestab tulemused `data` kataloogi. Faili nimed võiks olla `data1.txt`, `data2.txt` jne.
+
+Mõlema skripti puhul pöörake tähelepanu ka dokumentatsioonile.
+
+6. Üle kõikide `data` kataloogi failide leia mitu korda igat unikaalset arvu esineb (kasutades `cat`, `sort`, `uniq` käske) - salvesta tulemused faili `results/summary_total_unique_numbers_counted.txt`.
+7. Muuda `readme.md` faili, lisades sinna lühikese kirjelduse oma bash eksperimendist, lisa sinna ka kõik kasutatud käsud.
+8. Muuda `.gitignore` faili, et jätta `data` ja `results` kataloogid git jälgimisest välja.
