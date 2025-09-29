@@ -60,37 +60,37 @@ Docker koosneb kahest peamisest komponendist:
 
 ## Illustreeriv skeem
 
-=;=mermaid
+```mermaid
 graph TD
     A[Dockerfile] -->|docker build| B[Docker Image]
     B -->|docker run| C[Docker Container]
     C --> D[Volume / Mounted folder]
-=;=
+```
 
 ---
 
 ## Olulisemad käsud ja argumendid
 
 ### Versiooni kontroll
-=;=bash
+```bash
 docker --version
-=;=
+```
 Annab teada, kas Docker on õigesti paigaldatud.  
 
 ---
 
 ### Image tõmbamine
-=;=bash
+```bash
 docker pull ubuntu
-=;=
+```
 Laeb `ubuntu` image’i Docker Hub-ist alla. Kui käivitad `docker run ubuntu`, aga image puudub, tõmmatakse see automaatselt.  
 
 ---
 
 ### Containeri käivitamine
-=;=bash
+```bash
 docker run ubuntu
-=;=
+```
 Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, lõpetab ta kohe.  
 
 ---
@@ -102,46 +102,46 @@ Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, 
   - `-t` = tty → annab “terminali” tunde (bash prompt).  
   - Koos tähendab: saad konteinerisse sisse ja töötada nagu oma arvutis.  
   - Näide:  
-    =;=bash
+    ```bash
     docker run -it ubuntu bash
-    =;=
+    ```
     Käivitab Ubuntu, avab käsurea sees.  
 
 - **`-d`** – *detached mode*  
   - Käivitab konteineri taustal (ei seo terminali külge).  
   - Sobib teenustele (nt veebiserver).  
   - Näide:  
-    =;=bash
+    ```bash
     docker run -d nginx
-    =;=
+    ```
     Nginx veebiserver töötab taustal.  
 
 - **`--name`** – anna konteinerile nimi.  
   - Lihtsam kui kasutada automaatset ID-d.  
   - Näide:  
-    =;=bash
+    ```bash
     docker run -dit --name minu_ubuntu ubuntu bash
-    =;=
+    ```
 
 - **`-p host:container`** – portide avamine.  
   - Näide:  
-    =;=bash
+    ```bash
     docker run -d -p 8080:80 nginx
-    =;=
+    ```
     Avab brauseris http://localhost:8080 Nginxi serveri.  
 
 - **`-v host:container`** – volumes / bind mounts.  
   - Näide:  
-    =;=bash
+    ```bash
     docker run -it -v $(pwd)/data:/data ubuntu bash
-    =;=
+    ```
     Seob hosti kausta `data` konteineri `/data` kaustaga.  
 
 ---
 
 ### Konteinerite haldamine
 
-=;=bash
+```bash
 # Näita jooksvaid konteinerid
 docker ps
 
@@ -162,7 +162,7 @@ docker logs <name_or_id>
 
 # Kustuta konteiner
 docker rm <name_or_id>
-=;=
+```
 
 ---
 
@@ -172,28 +172,28 @@ docker rm <name_or_id>
 Õpi oma esimest konteinerit käivitama.  
 
 1. Käivita test-image:  
-   =;=bash
+   ```bash
    docker run hello-world
-   =;=
+   ```
    See tõmbab alla väikese programmi, mis prindib ekraanile tervituse ja kinnitab, et Docker töötab.  
 
 2. Kontrolli, kas konteiner salvestati ajaloosse:  
-   =;=bash
+   ```bash
    docker ps -a
-   =;=
+   ```
 
 ---
 
 ### Ülesanne 2: Interaktiivne Ubuntu
 1. Tõmba Ubuntu image:  
-   =;=bash
+   ```bash
    docker pull ubuntu
-   =;=
+   ```
 
 2. Käivita interaktiivne terminal konteineris:  
-   =;=bash
+   ```bash
    docker run -it ubuntu bash
-   =;=
+   ```
 
 3. Proovi sees Linuxi käske:  
    - `ls`, `pwd` (failide ja kaustade vaatamine)  
@@ -207,29 +207,29 @@ docker rm <name_or_id>
 Õpi konteinereid peatama ja taaskäivitama.  
 
 1. Käivita taustal konteiner nimega `test-ctr`:  
-   =;=bash
+   ```bash
    docker run -dit --name test-ctr ubuntu bash
-   =;=
+   ```
 
 2. Kontrolli olekut:  
-   =;=bash
+   ```bash
    docker ps
-   =;=
+   ```
 
 3. Peata konteiner:  
-   =;=bash
+   ```bash
    docker stop test-ctr
-   =;=
+   ```
 
 4. Käivita uuesti:  
-   =;=bash
+   ```bash
    docker start test-ctr
-   =;=
+   ```
 
 5. Ava uuesti terminal sees:  
-   =;=bash
+   ```bash
    docker exec -it test-ctr bash
-   =;=
+   ```
 
 ---
 
@@ -237,27 +237,27 @@ docker rm <name_or_id>
 Õpi ehitama oma image’i.  
 
 1. Loo fail `Dockerfile`:  
-   =;=dockerfile
+   ```dockerfile
    FROM python:3.11-slim
    COPY app.py /app/app.py
    WORKDIR /app
    CMD ["python", "app.py"]
-   =;=
+   ```
 
 2. Loo fail `app.py`:  
-   =;=python
+   ```python
    print("Tere Dockerist!")
-   =;=
+   ```
 
 3. Ehita image:  
-   =;=bash
+   ```bash
    docker build -t myapp .
-   =;=
+   ```
 
 4. Käivita image:  
-   =;=bash
+   ```bash
    docker run myapp
-   =;=
+   ```
 
 ---
 
@@ -266,14 +266,14 @@ docker rm <name_or_id>
 
 1. Loo kaust `data` ja sinna fail `hello.txt`.  
 2. Käivita konteiner, kus kaust mountitakse:  
-   =;=bash
+   ```bash
    docker run -it -v $(pwd)/data:/data ubuntu bash
-   =;=
+   ```
 
 3. Konteineris tee:  
-   =;=bash
+   ```bash
    cat /data/hello.txt
-   =;=
+   ```
 
 4. Lisa sinna uus fail ja kontrolli, et see ilmub ka hosti kausta.  
 
@@ -284,11 +284,11 @@ docker rm <name_or_id>
 - Sealt saab alla laadida valmis imagesid (`docker pull`).  
 - Sinna saab üles laadida ka enda tehtud imagesid (`docker push`).  
 - Näide:  
-  =;=bash
+  ```bash
   docker pull nginx
   docker tag myapp myuser/myapp:1.0
   docker push myuser/myapp:1.0
-  =;=
+  ```
 
 ---
 
