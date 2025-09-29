@@ -43,7 +43,7 @@ Docker koosneb kahest peamisest komponendist:
 - Sisaldab järjestikku käske nagu `FROM`, `COPY`, `RUN`, `CMD`.  
 - Näide:  
   - `FROM python:3.11-slim` → aluseks Python  
-  - `COPY app.py /app/app.py` → kopeeri fail image’i sisse  
+  - `COPY app.py /app/app.py` → kopeeri oma programmi scripti fail image’i sisse  
   - `CMD ["python", "app.py"]` → käivita rakendus konteineris  
 
 ### Docker Volumes & Mounts
@@ -91,11 +91,31 @@ Laeb `ubuntu` image’i Docker Hub-ist alla. Kui käivitad `docker run ubuntu`, 
 ```bash
 docker run ubuntu
 ```
-Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, lõpetab ta kohe.  
+Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, lõpetab ta kohe.
+
+**Oluline teada konteinerite käivitamisel:**
+- Iga `docker run` käsk loob alati *uue* konteineri, isegi kui kasutad sama image'it.
+- Kui kasutad `--name` argumenti (nt `--name minu_ubuntu`), peab nimi olema unikaalne. Kui sama nimega konteiner juba eksisteerib (ka siis, kui ta on peatatud), annab Docker vea.
+- Kui midagi läks käivitamisel valesti (nt vale käsk, port juba kasutusel vms), siis:
+  - Kontrolli olemasolevaid konteinereid käsuga `docker ps -a`.
+  - Vajadusel peata (`docker stop <name>`) ja kustuta (`docker rm <name>`) eelmine konteiner enne uue loomist sama nime või samade portidega.
+- Kui `--name` argumenti ei kasuta, loob Docker automaatselt uue anonüümse nimega konteineri. See võib põhjustada portide konflikte, kui mitu konteinerit üritavad kasutada sama porti.
+- Kui soovid sama konteinerit uuesti kasutada, kasuta `docker start <name>` või `docker restart <name>`, mitte `docker run`.
+
 
 ---
 
 ### Tähtsad `docker run` argumendid
+
+**Süntaks (SYNOPSIS):**
+```text
+docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+```
+Näide koos levinumate argumentidega:
+```text
+docker run -d --name minu_nginx -p 8080:80 -v $(pwd)/data:/usr/share/nginx/html nginx
+```
+See käivitab taustal (`-d`) nimega `minu_nginx` konteineri, seob pordi 8080 hostil pordiga 80 konteineris, mountib kohaliku kausta `data` Nginxi veebikausta ning kasutab `nginx` image'it.
 
 - **`-it`** – *interaktiivne terminal*  
   - `-i` = interactive → hoiab STDIN avatud, saad sisestada käske.  
@@ -120,7 +140,7 @@ Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, 
   - Lihtsam kui kasutada automaatset ID-d.  
   - Näide:  
     ```bash
-    docker run -dit --name minu_ubuntu ubuntu bash
+    docker run -it --name minu_ubuntu ubuntu bash
     ```
 
 - **`-p host:container`** – portide avamine.  
@@ -129,6 +149,20 @@ Käivitatakse uus konteiner `ubuntu` image’i põhjal. Kuna käske pole antud, 
     docker run -d -p 8080:80 nginx
     ```
     Avab brauseris http://localhost:8080 Nginxi serveri.  
+
+  **Soovitused hosti portide valimiseks:**
+  - Hostipoolne port (`host:container`) võib olla suvaline vaba port, kuid vältida tuleks süsteemi- ja standardporte (0–1023).
+  - Hea tava on kasutada vahemikku **1024–49151** (nn. "registered ports") või veelgi turvalisemalt **20000–49151**. (Lisaks plokivad brauserid osad pordid, vaata näiteks [Chrome'i blokeeritud porte](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/net/base/port_util.cc).)
+  - Kui jooksutad mitut konteinerit, vali igale erinev hosti port (nt 8080, 8081, 8888 jne).
+  - Väldi avalike teenuste puhul tüüpilisi porte (nt 80, 443), kui pole kindel, et neid pole juba kasutuses.
+  - Kontrolli, kas port on vaba käsuga `lsof -i :PORT` või `netstat -tuln | grep PORT`.
+  - Vajadusel saad kasutada ka suvalist vaba porti, määrates ainult konteineri poole (`-p :80`), kuid siis määrab Docker hosti porti automaatselt.
+
+  **Näide turvalisest portide määramisest:**
+  ```bash
+  docker run -d -p 18080:80 nginx
+  ```
+  See seob hosti pordi 18080 konteineri pordiga 80.
 
 - **`-v host:container`** – volumes / bind mounts.  
   - Näide:  
@@ -163,6 +197,82 @@ docker logs <name_or_id>
 # Kustuta konteiner
 docker rm <name_or_id>
 ```
+
+**Konteineri elutsükkel:**
+- Kui käivitad konteineri (`docker run`), luuakse uus konteiner ja see hakkab tööle.
+- Kui konteineri protsess lõppeb või kasutad `docker stop`, siis konteiner *peatatakse* (ta jääb süsteemi alles, kuid ei tööta).
+- Peatatud konteinerit saab uuesti käivitada käsuga `docker start <name_or_id>`. See jätkab samast kohast, kus pooleli jäi (failid ja muud andmed konteineri sees on alles).
+- Kui konteinerit enam ei vaja, saab selle süsteemist eemaldada käsuga `docker rm <name_or_id>`. See kustutab konteineri metaandmed ja failisüsteemi (kui andmed pole salvestatud volume'i või bind mounti).
+- NB! `docker stop` *ei eemalda* konteinerit, vaid ainult peatab selle. Süsteemi jäävad ka peatatud konteinerid, kuni need käsitsi eemaldad.
+- Kui proovid luua uue konteineri sama nimega, aga vana on alles (ka peatatud kujul), annab Docker vea.
+
+**Lühidalt:**  
+- `docker run` – loob ja käivitab uue konteineri.
+- `docker stop` – peatab konteineri, kuid ei eemalda seda.
+- `docker start` – käivitab peatatud konteineri uuesti.
+- `docker rm` – eemaldab konteineri süsteemist lõplikult.
+- Kasuta `docker ps -a`, et näha ka peatatud konteinereid ja vajadusel need eemaldada.
+
+---
+
+### Kuidas hallata konteinerite tekitatud volume
+
+**Mis on konteineri volume?**  
+Kui käivitad konteineri ja kasutad `-v` või `--mount` argumenti, võib Docker luua automaatselt uue volume (kui pole määratud olemasolevat). Mõned images (nt andmebaasid) võivad Dockerfile'is määrata `VOLUME` käsu, mis paneb Dockeri vaikimisi looma anonüümse volume, kui sa ise midagi ei määra.
+
+**Kuidas määrab süntaks, millist tüüpi volume kasutatakse?**  
+- Kui kasutad `-v <host_path>:<container_path>` või `--mount type=bind,source=<host_path>,target=<container_path>`, siis *mountitakse hosti kaust* konteinerisse (bind mount).  
+  - Näide:  
+    ```bash
+    docker run -v $(pwd)/data:/data ubuntu
+    ```
+  - Sellisel juhul andmed salvestatakse otse hosti failisüsteemi ning neid *ei näe* `docker volume ls` käsuga.
+- Kui kasutad `-v <volume_name>:<container_path>` või `--mount type=volume,source=<volume_name>,target=<container_path>`, siis kasutatakse *Docker volume'it* (nimeline või anonüümne).  
+  - Näide:  
+    ```bash
+    docker run -v mydata:/data ubuntu
+    ```
+  - Selline volume on nähtav käsuga `docker volume ls` ja Docker haldab selle asukohta ise.
+- Kui kasutad ainult konteineri path'i (`-v /data` või Dockerfile's `VOLUME /data`), loob Docker *anonüümse volume*.
+
+**Lühidalt:**  
+- *Bind mount* (`/host/path:/container/path`): andmed hosti failisüsteemis, ei näe `docker volume ls` all.
+- *Docker volume* (`volume_name:/container/path`): Docker haldab, näha `docker volume ls` all.
+- *Anonüümne volume* (`/container/path`): Docker loob automaatselt, näha `docker volume ls` all.
+
+**Kuidas neid uuesti kasutatakse?**  
+- Anonüümseid volume'eid ei saa taaskasutada, iga kord luuakse uus.
+- Nimelisi volume'eid saab taaskasutada erinevate konteinerite vahel, kui sama nime kasutad.
+- Volume'id säilitavad andmed ka siis, kui konteiner kustutatakse.
+
+**Volume'ite vaatamine ja haldamine:**
+```bash
+# Näita kõiki volume
+docker volume ls
+
+# Vaata konkreetse volume'i infot
+docker volume inspect <volume_name>
+
+# Kustuta volume (NB! ainult kui seda ei kasuta ükski konteiner)
+docker volume rm <volume_name>
+
+# Kustuta kõik kasutamata volume'id
+docker volume prune
+```
+
+**Kuidas aru saada, et konteiner loob volume?**
+- Vaata image'i Dockerfile'i – kui seal on `VOLUME` käsk, loob Docker selle mount-punkti jaoks volume.
+- Kui käivitad konteineri ilma `-v` või `--mount` argumendita, aga image kasutab `VOLUME`, tekib anonüümne volume.
+- Kontrolli konteineri detaile:
+  ```bash
+  docker inspect <container_id>
+  ```
+  Otsi väljalt `Mounts`, kas seal on tüüp `volume`.
+
+**Kokkuvõte:**  
+- Volume'id on mõeldud andmete püsivaks salvestamiseks.
+- Anonüümseid volume'eid võib koguneda, kui neid ei hallata – kasuta `docker volume ls` ja `docker volume prune`.
+- Nimelisi volume'eid saad taaskasutada erinevate konteinerite vahel.
 
 ---
 
@@ -294,4 +404,4 @@ docker rm <name_or_id>
 
 ## Edasi lugemiseks
 - [Docker Documentation](https://docs.docker.com/)  
-- [Play with Docker (online playground)](https://labs.play-with-docker.com/)  
+- [Play with Docker (online playground)](https://labs.play-with-docker.com/)
