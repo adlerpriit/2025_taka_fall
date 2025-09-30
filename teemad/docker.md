@@ -171,6 +171,10 @@ See käivitab taustal (`-d`) nimega `minu_nginx` konteineri, seob pordi 8080 hos
     ```
     Seob hosti kausta `data` konteineri `/data` kaustaga.  
 
+   `$(pwd)` on bash-i süntaks jooksva kataloogi jaoks. Selle alternatiivid windowsis:  
+   -  `%cd%` töötab ainult cmd.exe-s.  
+   -  `${PWD}` või `${PWD}.Path` töötab PowerShellis.
+
 ---
 
 ### Konteinerite haldamine
