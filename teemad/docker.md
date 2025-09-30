@@ -278,6 +278,61 @@ docker volume prune
 - Anonüümseid volume'eid võib koguneda, kui neid ei hallata – kasuta `docker volume ls` ja `docker volume prune`.
 - Nimelisi volume'eid saad taaskasutada erinevate konteinerite vahel.
 
+### Kuidas hallata ja kasutada Docker networks
+
+**Mis on Docker network?**  
+Docker network on virtuaalne võrk, mille kaudu konteinerid saavad omavahel ja vajadusel ka välismaailmaga suhelda. Iga konteiner käivitatakse mingis võrgus – vaikimisi on see `bridge` tüüpi võrk.
+
+**Miks ja millal kasutada Docker network'e?**
+- Kui sul on mitu konteinerit (nt veebiserver ja andmebaas), mis peavad omavahel suhtlema, on mõistlik panna nad samasse võrku.
+- Võimaldab piirata, millised konteinerid omavahel suhtlevad (turvalisus).
+- Võimaldab määrata konteineritele nimed, mille kaudu nad saavad üksteist võrgus leida (DNS).
+- Võimaldab luua eraldi võrke erinevate projektide või teenuste jaoks, vältides konflikte ja segadust.
+
+**Levinumad võrgutüübid:**
+- `bridge` – vaikimisi, sobib kõige tavalisemaks kasutuseks ühe masina sees.
+- `host` – konteiner kasutab hosti võrku otse (pole isoleeritud, vähem levinud).
+- `none` – konteineril pole üldse võrku.
+- `overlay` – mitme masina vahel (vajab Docker Swarm'i või muud orkestreerijat).
+
+**Kuidas Docker networks'iga töötada:**
+```bash
+# Näita olemasolevaid võrke
+docker network ls
+
+# Loo uus võrk (nt arenduseks)
+docker network create minu_vork
+
+# Käivita konteiner ja lisa see võrku
+docker run -d --name app1 --network minu_vork nginx
+
+# Lisa olemasolev konteiner võrku
+docker network connect minu_vork app1
+
+# Eemalda konteiner võrgust
+docker network disconnect minu_vork app1
+
+# Kustuta võrk (kui seal pole ühtegi konteinerit)
+docker network rm minu_vork
+
+# Vaata võrgu detaile
+docker network inspect minu_vork
+```
+
+**Kuidas konteinerid omavahel suhtlevad?**
+- Kui konteinerid on samas Docker network'is, saavad nad üksteist DNS-nime kaudu leida (`ping app1`).
+- Näiteks kui käivitad andmebaasi konteineri nimega `db` ja veebirakenduse sama võrgu sees, saab rakendus kasutada hostina lihtsalt `db`.
+
+**Kui palju peaks tähelepanu pöörama?**
+- Väikeste projektide puhul piisab tavaliselt vaikimisi `bridge` võrgust.
+- Kui kasutad mitut konteinerit, mis peavad omavahel suhtlema, loo spetsiaalne võrk ja lisa kõik vajalikud konteinerid sinna.
+- Suuremate või turvakriitiliste süsteemide puhul tasub võrke hoolikamalt planeerida (nt eraldi võrgud frontendi, backendi ja andmebaasi jaoks).
+
+**Kokkuvõte:**
+- Docker network võimaldab konteineritel omavahel turvaliselt ja mugavalt suhelda.
+- Enamasti piisab vaikimisi seadistustest, kuid mitme teenuse korral tasub kasutada spetsiaalseid võrke.
+- Võrkude haldamine on lihtne ja võimaldab vajadusel piirata ligipääsu või korraldada teenuste omavahelist suhtlust.
+
 ---
 
 ### Kuidas hallata kohalikke Docker image'eid
