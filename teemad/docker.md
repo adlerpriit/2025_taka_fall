@@ -276,6 +276,123 @@ docker volume prune
 
 ---
 
+### Kuidas hallata kohalikke Docker image'eid
+
+- Näita kõiki kohalikke image'eid:
+  ```bash
+  docker images
+  ```
+- Kustuta image (kui seda ei kasuta ükski konteiner):
+  ```bash
+  docker rmi <image_name_or_id>
+  ```
+- Kustuta kõik kasutamata image'id:
+  ```bash
+  docker image prune
+  ```
+- Näita detailset infot image'i kohta:
+  ```bash
+  docker inspect <image_name_or_id>
+  ```
+- Image'ile nime või sildi lisamine (tag):
+  ```bash
+  docker tag <image_name_or_id> myuser/myimage:versioon
+  ```
+
+---
+
+### Näide: Dockerfile arenduskeskkonna loomiseks (Python)
+
+Järgnevalt näide, kuidas luua arenduskeskkond Dockerfile abil, kasutades ametlikku Python image'it (Debian "trixie" baasil):
+
+```dockerfile
+# Kasuta ametlikku Python image'it (trixie flavor -- debiani baasil)
+FROM python:slim-trixie
+
+# Hea tava: määra töökataloog
+WORKDIR /user/src/app
+
+# Uuenda süsteemi paketid (hea tava arenduskonteineris)
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+
+# Kopeeri sõltuvuste fail
+COPY requirements.txt .
+
+# Paigalda Python sõltuvused
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Soovi korral: kopeeri kogu projekt:
+#  arenduse korral on mõistlikum bind mount-i kasutada
+#  kopeerimine on parem valik produktsioonis
+# COPY . .
+
+# Ava port 8000 (näiteks FastAPI, Django, jms jaoks)
+EXPOSE 8000
+```
+
+**Praktilised soovitused Dockerfile jaoks:**
+- Kasuta alati ametlikke base image'e ja vali vajadusel konkreetne flavor (nt `trixie`).
+- Määra alati `WORKDIR`, et kõik järgnevad käsud töötaksid õiges kataloogis.
+- Süsteemi pakettide uuendamine (`apt-get update && apt-get upgrade -y`) on arenduskonteineris kasulik, kuid produktsioonis võib seda vältida, et build oleks reprodutseeritav.
+- Kopeeri ja paigalda sõltuvused enne kogu projekti kopeerimist – nii kasutab Docker build cache'i efektiivsemalt.
+- Ära hoia konteineris tundlikke andmeid ega salavõtmeid.
+- Lisa vajadusel `.dockerignore` fail, et buildi ei satuks mittevajalikke faile (nt `.git`, `__pycache__`, jms).
+- Kasuta vajadusel mitme-etapilist buildi (multi-stage build), kui vajad väiksemat lõpp-image'i.
+- Defineeri `CMD` või `ENTRYPOINT`, et määrata vaikimisi käivitatav protsess - oluline produktsioonikonteinerite puhul.
+
+---
+
+### Docker Compose – mitme konteineri haldamine lihtsasti
+
+Docker Compose võimaldab kirjeldada ja käivitada mitut omavahel seotud konteinerit ühe YAML-faili (`docker-compose.yml`) abil. See on eriti kasulik, kui projektis on mitu teenust (nt veebiserver, andmebaas, cache), mis peavad koos töötama. Kõik teenused, võrgud ja volume'id saab defineerida ühes failis ning kogu stacki saab käivitada ühe käsuga:
+
+```bash
+docker compose up
+```
+
+See muudab arenduskeskkonna käivitamise ja haldamise lihtsaks ning ühtlustab tööprotsessi kogu meeskonnale. Vaata lisaks [Docker Compose dokumentatsiooni](https://docs.docker.com/compose/).
+
+---
+
+### Dockeri kasutamise praktilised/elulised stsenaariumid
+
+**1. Arendus vs produktsioon**
+- Arendajad saavad kasutada sama Dockerfile'i nii arenduses kui ka produktsioonis, tagades identse tarkvarakeskkonna.
+- Arenduses võib kasutada bind mount'e ja avatud porte, produktsioonis piirata ligipääsu ja kasutada optimeeritud image'eid.
+
+**2. Arenduskeskkonna ühtlustamine kogu meeskonnale**
+- Kõik tiimiliikmed saavad identse arenduskeskkonna sõltumata oma arvuti operatsioonisüsteemist või seadistustest.
+- Uue arendaja liitumisel piisab ühest käsust (`docker compose up` vms), et kogu stack tööle saada.
+
+**3. Tarkvara pakendamine platvormist sõltumatult**
+- Docker image töötab igal masinal, kus on Docker – pole vahet, kas host on Windows, Mac või Linux.
+- Lihtne tarkvara jagamine klientidele või partneritele: "käivita see image".
+
+**4. Mitme teenuse haldamine ja orkestreerimine**
+- Näiteks veebirakendus + andmebaas + cache – igaüks oma konteineris, suhtlevad omavahel läbi võrgu.
+- Docker Compose võimaldab kogu stacki käivitada ühe käsuga.
+
+**5. Legacy tarkvara käitamine**
+- Vanad rakendused, mis vajavad spetsiifilist OS-i või teeke, saab isoleerida konteinerisse, vältides konflikte hosti süsteemiga.
+
+**6. Testimine ja CI/CD**
+- Testid saab jooksutada puhtas konteineris, vältides "minu masinas töötab" tüüpi probleeme.
+- CI/CD süsteemides (nt GitHub Actions, GitLab CI) kasutatakse tihti Dockeri konteinerites buildimist ja testimist.
+
+**7. Skaalautuvus ja pilvekeskkonnad**
+- Konteinerid sobivad hästi automaatseks skaleerimiseks pilves (nt Kubernetes, AWS ECS).
+- Sama image'it saab käivitada kümnetes või sadades koopiates vastavalt vajadusele.
+
+**8. Õpetus ja katsetamine**
+- Õppekeskkondades saab anda igale õppijale oma isoleeritud konteineri.
+- Uute tehnoloogiate või tööriistade katsetamine ilma oma arvutit "risustamata".
+
+**9. Turvalisus ja isoleerimine**
+- Konteinerid võimaldavad piirata rakenduse ligipääsu hosti ressurssidele (failisüsteem, võrk).
+- Võimalik jooksutada potentsiaalselt ohtlikku koodi piiratud keskkonnas.
+
+---
+
 ## Ülesanded
 
 ### Ülesanne 1: Hello World Dockeriga
@@ -389,6 +506,42 @@ docker volume prune
 
 ---
 
+### Ülesanne 6: Halda konteinereid ja korista enda järel
+Õpi, kuidas eemaldada mittevajalikud konteinerid, volume'id ja vabastada kettaruumi.  
+
+1. Näita kõiki konteinereid (sh peatatud):  
+   ```bash
+   docker ps -a
+   ```
+
+2. Eemalda kõik konteinerid, mida enam ei vaja, kui konteiner veel töötab, tuleb see ennem peatada (`docker stop <container_id_or_name>`):  
+   ```bash
+   docker rm <container_id_or_name>
+   ```
+
+3. Näita kõiki volume'eid:  
+   ```bash
+   docker volume ls
+   ```
+
+4. Eemalda kasutamata volume'id:  
+   ```bash
+   docker volume prune
+   ```
+
+5. Kontrolli süsteemi kasutust:  
+   ```bash
+   docker system df
+   ```
+
+6. Korista kõik kasutamata andmed (images, konteinerid, volume'id, võrgud):  
+   ```bash
+   # selle käsuga peab olema ettevaatlik. Enne kasutamist loe lisaks: https://docs.docker.com/reference/cli/docker/system/prune/ 
+   docker system prune
+   ```
+
+**NB!** Veendu, et ei eemalda midagi, mida veel vajad.  
+
 ## Docker Hub ja registrid
 - [Docker Hub](https://hub.docker.com/) on avalik registry.  
 - Sealt saab alla laadida valmis imagesid (`docker pull`).  
@@ -402,6 +555,7 @@ docker volume prune
 
 ---
 
-## Edasi lugemiseks
+## Viited
 - [Docker Documentation](https://docs.docker.com/)  
-- [Play with Docker (online playground)](https://labs.play-with-docker.com/)
+- [Docker Compose dokumentatsiooni](https://docs.docker.com/compose/)  
+- [Docker Hub](https://hub.docker.com/)
