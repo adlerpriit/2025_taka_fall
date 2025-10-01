@@ -64,7 +64,7 @@ Docker koosneb kahest peamisest komponendist:
 graph TD
     A[Dockerfile] -->|docker build| B[Docker Image]
     B -->|docker run| C[Docker Container]
-    C --> D[Volume / Mounted folder]
+    C <--> D[Volume / Mounted folder]
 ```
 
 ---
