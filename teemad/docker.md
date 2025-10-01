@@ -1,4 +1,4 @@
-# Docker Hands-on Töötoa Materjal
+# Sissejuhatus Docker tööriista
 
 ## Eesmärk
 Selles töötoas tutvume Dockeriga: mis see on, kuidas ta töötab, millised on põhimõisted ning kuidas ehitada ja käivitada oma konteinerid.  
