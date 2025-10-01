@@ -615,6 +615,6 @@ See muudab arenduskeskkonna käivitamise ja haldamise lihtsaks ning ühtlustab t
 ---
 
 ## Viited
-- [Docker Documentation](https://docs.docker.com/)  
-- [Docker Compose dokumentatsiooni](https://docs.docker.com/compose/)  
+- [Docker dokumentatsioon](https://docs.docker.com/)  
+- [Docker Compose dokumentatsioon](https://docs.docker.com/compose/)  
 - [Docker Hub](https://hub.docker.com/)
