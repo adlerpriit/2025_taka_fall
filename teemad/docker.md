@@ -399,6 +399,16 @@ EXPOSE 8000
 - Kasuta vajadusel mitme-etapilist buildi (multi-stage build), kui vajad väiksemat lõpp-image'i.
 - Defineeri `CMD` või `ENTRYPOINT`, et määrata vaikimisi käivitatav protsess - oluline produktsioonikonteinerite puhul.
 
+## Docker build
+
+Konteineri image'i ehitamine Dockerfile'ist:
+```bash
+docker build -t minu_python_app .
+```
+- `-t` võimaldab määrata image'ile nime (tag).
+- `.` tähendab, et Dockerfile asub jooksvas kataloogis.
+Tehtud image on nüüd saadaval kohalikus Docker registris (`docker images`). Ja saad selle põhjal konteineri käivitada kasutades `docker run` käsku.
+
 ---
 
 ### Docker Compose – mitme konteineri haldamine lihtsasti

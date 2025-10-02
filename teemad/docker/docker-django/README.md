@@ -27,7 +27,6 @@ See loob uue Django projekti nimega `myproject` jooksvas kataloogis.
 ## Django arendusserveri käivitamine
 Django arendusserveri käivitamiseks konteineris kasuta järgmist käsku:
 ```bash
-cd myproject/ # kõik django käsud tuleb käivitada Django projekti kataloogis
 python manage.py runserver 0.0.0.0:8000
 ```
 See käivitab Django arendusserveri, mis on ligipääsetav sinu hostmasinas aadressil `http://localhost:8000`. 
