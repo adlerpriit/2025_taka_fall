@@ -5,6 +5,13 @@ Selles juhendis näitan, kuidas seadistada lihtsat Django projekti, mis jookseb 
 ## Dockerfile
 [Dockerfile](Dockerfile) sisaldab juhiseid, kuidas luua Docker image, mis sisaldab kõiki vajalikke komponente Django projekti jooksutamiseks. Projekti käigus võib tekkida vajadus lisada täiendavaid sõltuvusi. Python sõltuvused on tavaliselt hallatud `requirements.txt` faili kaudu. Kui soovid süsteemi täiendavaid pakette lisada, siis tee seda Dockerfile kaudu.
 
+## Docker image loomine
+Projekti juurkataloogis, kus asub Dockerfile, käivita järgmne käsk, et luua Docker image:
+```bash
+docker build -t <image_name> .
+```
+Asenda `<image_name>` sobiva nimega, mis aitab sul hiljem image'i tuvastada.
+
 ## Docker run käsk
 Docker konteineri jooksutamiseks kasuta järgmist käsku projektikataloogis:
 

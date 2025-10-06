@@ -625,6 +625,7 @@ See muudab arenduskeskkonna käivitamise ja haldamise lihtsaks ning ühtlustab t
 ---
 
 ## Viited
+- [Docker cheatsheet](https://docs.docker.com/get-started/docker_cheatsheet.pdf)
 - [Docker dokumentatsioon](https://docs.docker.com/)  
 - [Docker Compose dokumentatsioon](https://docs.docker.com/compose/)  
 - [Docker Hub](https://hub.docker.com/)
