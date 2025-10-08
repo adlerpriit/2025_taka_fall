@@ -111,20 +111,20 @@ Kopeeri need konteinerisse ja käivita psql-is:
 ```bash
 # host masina käsureal
 # kopeeri fail konteinerisse
-docker cp BDS_create_objects.sql postgres-sql:/
-docker cp BDS_load_data.sql postgres-sql:/
-docker cp BDS_drop_all_objects.sql postgres-sql:/
+docker cp BSD_create_objects.sql postgres-sql:/
+docker cp BSD_load_data.sql postgres-sql:/
+docker cp BSD_drop_all_objects.sql postgres-sql:/
 
 # käivita skriptid
-docker exec -it postgres-sql psql -U postgres -d bikestores -f BDS_create_objects.sql
-docker exec -it postgres-sql psql -U postgres -d bikestores -f BDS_load_data.sql
+docker exec -it postgres-sql psql -U postgres -d bikestores -f BSD_create_objects.sql
+docker exec -it postgres-sql psql -U postgres -d bikestores -f BSD_load_data.sql
 ```
 Alternatiivina võid skriptid käivitada ka psql sessioonis:
 ```sql
 -- psql promptis
 \c bikestores # ühendu bikestores andmebaasiga
-\i BDS_create_objects.sql # loo tabelid ja muud objektid lugedes skripti samast kataloogist, kus psql on avatud
-\i BDS_load_data.sql
+\i BSD_create_objects.sql # loo tabelid ja muud objektid lugedes skripti samast kataloogist, kus psql on avatud
+\i BSD_load_data.sql
 ```
 
 Kui kõik läks hästi, siis peaksid nüüd nägema `bikestores` andmebaasis mitmeid tabeleid:
