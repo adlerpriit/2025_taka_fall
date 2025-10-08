@@ -68,7 +68,9 @@ Et näha kõiki käske, mis psql-is saad teha, kirjuta `\?`. Mõned kasulikud k�
 - `\dt` → näita kõiki aktiivse andmebaasi tabeleid
 - `\d tabel` → näita tabeli struktuuri
 
-Käivitades Docker konteineri sees PostgreSQL andmebaasi mootori, oleme loonud keskkonna, kus saame hallata ja pärida struktureeritud andmeid. Andmebaasi mootor, nagu PostgreSQL, on tarkvara, mis vastutab andmete talletamise, haldamise ja neile ligipääsu võimaldamise eest. Relatsiooniline andmebaas on seejuures süsteem, mis salvestab andmeid tabelite kujul, kus read esindavad kirjeid ja veerud omadusi. See struktuur võimaldab andmeid loogiliselt organiseerida ja omavahel seostada, muutes nende töötlemise ja analüüsimise tõhusaks. Näiteks võib tabel "customers" sisaldada infot klientide kohta, samas kui tabel "orders" salvestab nende tehtud ostud, ning nende kahe tabeli vahel saab luua seoseid, et andmeid omavahel siduda.
+Käivitades Docker konteineri sees PostgreSQL andmebaasi mootori, oleme loonud keskkonna, kus saame hallata ja pärida struktureeritud andmeid. Andmebaasi mootor, nagu PostgreSQL, on tarkvara, mis vastutab andmete talletamise, haldamise ja neile ligipääsu võimaldamise eest. 
+
+Relatsiooniline andmebaas on seejuures süsteem, mis salvestab andmeid tabelite kujul, kus read esindavad kirjeid ja veerud omadusi. See struktuur võimaldab andmeid loogiliselt organiseerida ja omavahel seostada, muutes nende töötlemise ja analüüsimise tõhusaks. Näiteks võib tabel "customers" sisaldada infot klientide kohta, samas kui tabel "orders" salvestab nende tehtud ostud, ning nende kahe tabeli vahel saab luua seoseid, et andmeid omavahel siduda.
 
 ### Primary Key ja Foreign Key
 - **Primary Key** on veerg või veergude kombinatsioon, mis unikaalselt identifitseerib iga rea tabelis. See tagab, et tabelis ei ole kahte rida sama väärtusega primary key veerus ning väärtus ei saa olla tühi (NULL). Näiteks tabelis "customers" võib veerg `customer_id` olla primary key, kuna see identifitseerib iga kliendi unikaalselt.
