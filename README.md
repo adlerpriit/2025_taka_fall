@@ -10,3 +10,4 @@ Kursuse käigus tutvustame ka relatsiooniliste andmebaaside loogikat ja SQL pär
 3. [R ja RStudio](teemad/R)
 4. [BASH shell](teemad/bash.md)
 5. [Docker](teemad/docker.md)
+6. [SQL](teemad/sql.md)
