@@ -582,7 +582,7 @@ HAVING AVG(p.list_price) > 100
 ORDER BY average_price DESC;
 ```
 
-**Ülesanne 7:** Leia kõik tellimused, kus tellitud toodete kogusumma (quantity) on suurem kui 8. Kuvage iga tellimuse ID, kliendi täisnimi (eesnimi ja perekonnanimi koos) ning erinevate toodete arv selles tellimuses. Sorteerige tulemused tellimuse ID järgi kasvavas järjekorras.
+**Ülesanne 7:** Leia kõik tellimused, kus tellitud toodete koguarv (quantity) on suurem kui 8. Kuvage iga tellimuse ID, kliendi täisnimi (eesnimi ja perekonnanimi koos) ning erinevate toodete arv selles tellimuses. Sorteerige tulemused tellimuse ID järgi kasvavas järjekorras.
 
 ```sql
 -- kirjuta oma vastus siia
