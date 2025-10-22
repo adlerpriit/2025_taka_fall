@@ -11,3 +11,4 @@ Kursuse käigus tutvustame ka relatsiooniliste andmebaaside loogikat ja SQL pär
 4. [BASH shell](teemad/bash.md)
 5. [Docker](teemad/docker.md)
 6. [SQL](teemad/sql.md)
+7. [VSCode arenduskonteinerid](teemad/devcontainers.md)
