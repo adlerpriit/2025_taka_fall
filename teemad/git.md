@@ -177,6 +177,7 @@ git push
 - **Konfliktide lahendamine**: Kui kaks inimest muudavad sama faili, võib tekkida konflikt. Lahenda need enne pushimist.
 
 ## Lisamaterjalid
+- [CodeRefinery git-intro materjalid](https://coderefinery.github.io/git-intro/)
 - [Pro Git raamat (inglise keeles)](https://git-scm.com/book/en/v2)
 - [GitHub Docs](https://docs.github.com/en/get-started)
 - [VS Code Git juhend](https://code.visualstudio.com/docs/editor/versioncontrol)
