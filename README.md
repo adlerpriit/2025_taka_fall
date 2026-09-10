@@ -6,9 +6,9 @@ Kursuse käigus tutvustame ka relatsiooniliste andmebaaside loogikat ja SQL pär
 
 
 1. [Giti ja versioonihalduse kasutamine](teemad/git.md)
-2. [Python ja Jupyter](teemad/python)
-3. [R ja RStudio](teemad/R)
-4. [BASH shell](teemad/bash.md)
-5. [Docker](teemad/docker.md)
-6. [SQL](teemad/sql.md)
+2. [BASH shell](teemad/bash.md)
+3. [Docker](teemad/docker.md)
+4. [Python ja Jupyter](teemad/python)
+5. [SQL](teemad/sql.md)
+6. [R ja RStudio](teemad/R)
 7. [VSCode arenduskonteinerid](teemad/devcontainers.md)
