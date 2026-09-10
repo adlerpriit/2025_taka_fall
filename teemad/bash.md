@@ -1029,7 +1029,7 @@ Kasutades ülaltoodud käske:
 Kõik skriptid peaks olema 'scripts' kataloogis, andmed 'data' kataloogis ja tulemused 'results' kataloogis.
 
 4. Kasutades `nano` editori kirjuta script nimega `generate_data.py`, mis genereerib 200 juhuslikku täisarvu (vahemikus 1..100).
-5. Kasutades oma lemmiks tekstiredaktorit kirjuta script nimega `generate_data.sh`, mis käivitab `generate_data.py` faili N (N=10) korda ja salvestab tulemused `data` kataloogi. Faili nimed võiks olla `data1.txt`, `data2.txt` jne.
+5. Kasutades oma lemmik tekstiredaktorit kirjuta script nimega `generate_data.sh`, mis käivitab `generate_data.py` faili N (N=10) korda ja salvestab tulemused `data` kataloogi. Faili nimed võiks olla `data1.txt`, `data2.txt` jne.
 
 Mõlema skripti puhul pöörake tähelepanu ka dokumentatsioonile.
 
