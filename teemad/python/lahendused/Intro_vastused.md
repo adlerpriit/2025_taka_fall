@@ -1,0 +1,138 @@
+# Intro vastused
+
+Proovi [Intro harjutused](../Intro.ipynb) enne ise lahendada. Allpool on üks võimalik lahendus. Iga koodiplokk on eraldi käivitatav; võid selle kopeerida oma töövihiku uude lahtrisse. Võrdle nii tulemust kui ka lahenduskäiku.
+
+## I-01
+
+Omista hind ja kogus ning arvuta korrutis. Hoia algväärtuste omistamine samas lahtris: siis ei sõltu tulemus varasemast käivitusest.
+
+```python
+hind = 12.50
+kogus = 2
+kogumaksumus = hind * kogus
+print(f"Raamatud maksavad {kogumaksumus:.2f} eurot.")
+assert kogumaksumus == 25
+```
+
+Kahe raamatu hind on 25 eurot, nelja raamatu hind 50 eurot. Muutmata lahtri korduskäivitus annab sama tulemuse. Levinud eksimus on hinna kirjutamine `12,50`: Pythoni kümnendmärk on punkt.
+
+## I-02
+
+Indeks `0` valib esimese, `-1` viimase elemendi. Lõigu `[:2]` lõppindeks 2 ei kuulu lõiku. Sõnastikust leiad listi võtme järgi.
+
+```python
+temperatuurid = [-3, 2, 5, 1]
+print(temperatuurid[0])
+print(temperatuurid[-1])
+print(temperatuurid[:2])
+ilm = {"koht": "Tartu", "temperatuurid": temperatuurid}
+print(ilm)
+assert len(ilm["temperatuurid"]) == 4
+```
+
+Esimene väärtus on −3, viimane 1 ja lõik `[-3, 2]`. `ilm["temperatuurid"]` kasutab sõnastiku võtit; `temperatuurid[0]` listi indeksit.
+
+## I-03
+
+Piirväärtus kuulub arvestatud tulemuste hulka, mistõttu on tingimus `>= 50`.
+
+```python
+punktid = 50
+if punktid >= 50:
+    tulemus = "arvestatud"
+else:
+    tulemus = "arvestamata"
+print(tulemus)
+```
+
+Väärtus 49 peab andma „arvestamata”, 50 ja 51 „arvestatud”. Kontrolli neid ükshaaval, muutes esimest rida. Ainult `>` kasutamine jätaks täpselt 50 punkti valesse harusse.
+
+## I-04
+
+Tsüklis lisad summale ainult positiivsed arvud. Summa algväärtus tuleb määrata enne tsüklit, mitte selle sees.
+
+```python
+arvud = [3, -2, 0, 5, -1]
+summa = 0
+for arv in arvud:
+    if arv > 0:
+        summa = summa + arv
+print(summa)
+assert summa == 8
+```
+
+Positiivsed liikmed on 3 ja 5. Kui listis on ainult nullid ja negatiivsed arvud, jääb summa nulliks. Kui lähtestad summa tsükli sees, kaovad varasemate sammude tulemused.
+
+## I-05
+
+Funktsioon peab kasutama parameetrina saadud listi. Tagasta summa pärast tsüklit; tsükli sees olev `return` lõpetaks funktsiooni liiga vara.
+
+```python
+def positiivsete_summa(arvud):
+    summa = 0
+    for arv in arvud:
+        if arv > 0:
+            summa = summa + arv
+    return summa
+
+assert positiivsete_summa([3, -2, 0, 5]) == 8
+assert positiivsete_summa([]) == 0
+assert positiivsete_summa([-4, 0, -1]) == 0
+assert positiivsete_summa([2]) == 2
+tulemus = positiivsete_summa([3, -2, 0, 5])
+print(tulemus * 2)
+```
+
+Viimane rida kuvab 16. Tühja listi korral tsükli keha ei käivitu ja tagastatakse algväärtus 0. `print(summa)` ilma `return`-ita kuvaks küll arvu, kuid funktsiooni tagastusväärtus oleks `None`.
+
+## I-06
+
+```python
+kogus = 3
+print(kogus * 2)
+```
+
+Vigases näites oli nimi `koguss`, mida polnud loodud. See tekitaks `NameError`-i. Veateate viimaselt realt leiad tundmatu nime ja eelnevatelt ridadelt vea asukoha. Parandatud kood kuvab 6. Kuna omistus on samas lahtris, pole vaja varasemat muutujaseisu.
+
+## I-07
+
+1. Õige on **B: 1–4**. `range` jätab lõppväärtuse välja.
+2. Ilma täidetud `return`-lauseta on tagastusväärtus **`None`**. Ekraanile kuvatud tekst ja tagastusväärtus on eri asjad.
+3. Lugemiseks peab fail juba olemas olema. Näide loob selle režiimiga `"w"`, mis kirjutab varasema sisu üle. Kogu näite korduskäivitus annab seetõttu sama failisisu.
+
+```python
+print(list(range(1, 5)))
+
+def kuva_tervitus():
+    print("Tere!")
+
+tulemus = kuva_tervitus()
+print(tulemus)
+assert tulemus is None
+```
+
+`is None` kontrollib, kas tulemus on väärtuse puudumist tähistav objekt. Arvude ja sõnede väärtuste võrdlemisel kasuta tavaliselt `==`.
+
+## I-L1 — lisamaterjal
+
+Ümbermõõt on kaks laiust ja kaks kõrgust. Meetod kasutab objekti atribuute `self.laius` ja `self.korgus`.
+
+```python
+class Ristkulik:
+    def __init__(self, laius, korgus):
+        self.laius = laius
+        self.korgus = korgus
+
+    def pindala(self):
+        return self.laius * self.korgus
+
+    def umbermoot(self):
+        return 2 * (self.laius + self.korgus)
+
+kujund = Ristkulik(3, 4)
+print(kujund.umbermoot())
+assert kujund.umbermoot() == 14
+assert Ristkulik(2, 2).umbermoot() == 8
+```
+
+See lihtne klass eeldab mittenegatiivseid küljepikkusi. Meetodi väljakutse on `kujund.umbermoot()`; sulgudeta saaksid meetodi enda, mitte arvutatud ümbermõõdu.
