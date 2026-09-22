@@ -2,15 +2,13 @@
 
 Selle nädala jooksul õpid kirjutama lihtsat Pythoni koodi, töötlema tabelandmeid ja koostama graafikuid. Kasutad kolme Jupyteri töövihikut (*notebook*). Töövihikus on selgitused, käivitatavad näited ja harjutused.
 
-| Järjekord | Töövihik | Põhiosa tulemus | Iseseisev töö |
-| --- | --- | --- | ---: |
-| 1 | [Pythoni alused](Intro.ipynb) | Muutujad, tingimused, tsükkel, funktsioon ja lihtsa vea parandamine | 110 min |
-| 2 | [Tabelandmed Pandasega](Pandas.ipynb) | Andmete kontroll, filtreerimine ja rühmade kokkuvõte | 70 min |
-| 3 | [Graafikud Seaborniga](Seaborn.ipynb) | Graafiku valimine, kujundamine ja selgitamine | 45 min |
+| Järjekord | Töövihik | Põhiosa tulemus |
+| --- | --- | --- |
+| 1 | [Pythoni alused](Intro.ipynb) | Muutujad, tingimused, tsükkel, funktsioon ja lihtsa vea parandamine |
+| 2 | [Tabelandmed Pandasega](Pandas.ipynb) | Andmete kontroll, filtreerimine ja rühmade kokkuvõte |
+| 3 | [Graafikud Seaborniga](Seaborn.ipynb) | Graafiku valimine, kujundamine ja selgitamine |
 
-Lisaks arvesta 15 minutit alustamiseks, 60 minutit lõpuülesande lõpetamiseks ja 45 minutit kordamiseks. Kokku on see **5 tundi 45 minutit iseseisvat tööd**, millele lisandub seminar. Videote vaatamine kuulub sama aja sisse. Videod lisanduvad hiljem; praegu saad läbida kõik osad töövihikute abil.
-
-Ajad on hinnangulised. **Lisamaterjal** on valikuline ega ole põhiosa ülesannete eelduseks. Kui teema on tuttav, alusta harjutusest ja pöördu vajaduse korral selgituste juurde tagasi.
+**Lisamaterjal** on valikuline ega ole põhiosa ülesannete eelduseks. Kui teema on tuttav, alusta harjutusest ja pöördu vajaduse korral selgituste juurde tagasi.
 
 ## Alustamise enesekontroll
 
@@ -34,6 +32,41 @@ Colab võimaldab Pythonit kasutada veebibrauseris. Vajad Google'i kontot; eraldi
 5. Töö lõpetamisel vali **File → Download → Download .ipynb** ja lisa fail oma kursuserepos õigesse kausta. Drive'i salvestamine üksi ei uuenda GitHubi repot.
 
 Colabi käivituskeskkond on ajutine: sinna loodud failid võivad ühenduse lõppedes kaduda. Laadi vajalikud CSV- ja pildifailid vasakpoolsest failivaatest alla. Töövihiku tekst ja kood säilivad sinu salvestatud koopias.
+
+## Jupyter Dockeris
+
+Pythoni töövihikuid saad kasutada Dockeris jooksva JupyterLabi kaudu. Python ja vajalikud teegid paigaldatakse tõmmisesse; töövihikuid avad ja muudad oma brauseris. Vaja on töötavat Dockerit ning kursuse failide kohalikku koopiat. Dockeri põhimõtteid saad korrata [Dockeri teemas](../docker.md).
+
+Ava terminal **repo juurkaustas**, kus asuvad `data` ja `teemad`. Kui kasutad oma kursuserepot, kopeeri sinna kogu `teemad/python` kaust ning `data/Islander_data.csv` ja `data/README.md`, säilitades sama paigutuse. Seejärel ehita tõmmis:
+
+```bash
+docker build -t taka-jupyter -f teemad/python/Dockerfile teemad/python
+```
+
+[Dockerfile](Dockerfile) kasutab Python 3.12 ning paigaldab teegid failist [requirements.txt](requirements.txt). Ehitamine vajab internetti. Kui see fail muutub, ehita tõmmis sama käsuga uuesti.
+
+Linuxis ja macOS-is käivita konteiner samast repo juurkaustast:
+
+```bash
+docker run --rm -it --name taka-jupyter --user "$(id -u):$(id -g)" -p 127.0.0.1:8888:8888 --mount "type=bind,source=$(pwd),target=/workspace" taka-jupyter
+```
+
+Windowsi PowerShellis:
+
+```powershell
+docker run --rm -it --name taka-jupyter -p 127.0.0.1:8888:8888 --mount "type=bind,source=$($PWD.Path),target=/workspace" taka-jupyter
+```
+
+Repo kaust on konteineris nähtav teena `/workspace`. Seal salvestatud töövihikud, tabelid ja pildid jäävad sinu arvutisse alles ka pärast konteineri eemaldamist. Linuxi ja macOS-i käsu `--user` kasutab sinu kasutajatunnuseid, et loodud failid kuuluksid sulle. Port 8888 on avatud sinu arvuti kaudu aadressil `127.0.0.1`.
+
+1. Leia terminalist aadress kujul `http://127.0.0.1:8888/lab?token=...` ja ava see brauseris. Kasuta tegelikku, terviklikku aadressi; token annab ligipääsu sinu Jupyteri seansile.
+2. Ava JupyterLabi failivaates `teemad/python/Intro.ipynb` ja käivita esimene koodilahter.
+3. Salvesta töö nupuga **Save** või klahvidega **Ctrl + S**. Oma muudatusi näed repo terminalis käsuga `git status`.
+4. Lõpetamiseks vajuta konteineri terminalis **Ctrl + C** ja kinnita sulgemine. Teisest terminalist saad kasutada käsku `docker stop taka-jupyter`.
+
+Järgmisel korral piisab samast `docker run` käsust. `--rm` eemaldab peatatud konteineri, kuid tõmmis ja repo failid säilivad. Kui port 8888 on hõivatud, kasuta `-p 127.0.0.1:8889:8888` ning muuda brauseris avatava aadressi port 8889-ks. Kui nimi `taka-jupyter` on juba kasutusel, kontrolli käsku `docker ps -a` ja peata eelmine seanss enne uue alustamist.
+
+Lisainfo: [kausta ühendamine konteineriga](https://docs.docker.com/engine/storage/bind-mounts/) ja [Jupyteri tokeniga sisselogimine](https://jupyter-server.readthedocs.io/en/latest/operators/security.html).
 
 ## Kohalik alternatiiv: Jupyter või VS Code
 
@@ -59,17 +92,24 @@ Tee kopeerimise järel commit. Nii saad hiljem oma lahendusi algse materjaliga v
 Liigu terminalis oma repo kausta `teemad/python`. Linuxis ja macOS-is:
 
 ```bash
+# Virtuaalkeskkonna loomine.
 python3 -m venv .venv
+# Virtuaalkeskkonna aktiveerimine.
 source .venv/bin/activate
+# Teekide paigaldamine.
 python -m pip install -r requirements.txt
+# JupyterLabi käivitamine.
 python -m jupyterlab
 ```
 
 Windowsi PowerShellis saab kasutada keskkonna Pythoni täisteed ilma aktiveerimata:
 
 ```powershell
+# Virtuaalkeskkonna loomine.
 py -3.12 -m venv .venv
+# Teekide paigaldamine virtuaalkeskkonda.
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+# JupyterLabi käivitamine sama keskkonnaga.
 .\.venv\Scripts\python.exe -m jupyterlab
 ```
 

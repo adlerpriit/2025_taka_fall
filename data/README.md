@@ -19,7 +19,7 @@ Positiivne `Diff` tähendab skoori suurenemist ja negatiivne vähenemist. Siin k
 
 Pane tähele, et `S` tähendab veerus `Drug` platseebot, kuid veerus `Happy_Sad_group` kurbi mälestusi. `Diff` on tõstutundlik veerunimi. Failis puuduvad hariduse, sissetuleku ja hobide andmed.
 
-Allikas: Steve Ahn, *Memory Test on Drugged Islanders Data*, Zenodo (2025), [doi:10.5281/zenodo.15369169](https://doi.org/10.5281/zenodo.15369169). Zenodo kirjes on andmestiku litsents **CC BY 4.0**. Andmete kasutamisel lisa allikaviide. Allikakirjelduse vanusepiir ja faili tegelik väikseim vanus erinevad; harjutustes lähtume faili väärtustest.
+Allikas: Steve Ahn (2019), [*Memory Test on Drugged Islanders Data*](https://www.kaggle.com/datasets/steveahn/memory-test-on-drugged-islanders-data), Kaggle. Andmestiku esimene versioon avaldati 20.08.2019; Kaggle'i kirjes on litsents **CC BY-SA 4.0**. Allikakirjelduse järgi koostas Ahn andmestiku UCLA juhendamisel tehtud katse käigus virtuaalsete katseisikutega. Andmete kasutamisel lisa allikaviide.
 
 `Islander_data.xlsx` on sama teema Exceli fail. Pythoni põhiosas kasutame CSV-d, mille lugemine ei vaja Exceli lisateeki.
 

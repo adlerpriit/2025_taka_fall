@@ -7,10 +7,15 @@ Proovi [Intro harjutused](../Intro.ipynb) enne ise lahendada. Allpool on üks v�
 Omista hind ja kogus ning arvuta korrutis. Hoia algväärtuste omistamine samas lahtris: siis ei sõltu tulemus varasemast käivitusest.
 
 ```python
+# Algväärtuste määramine ja kogumaksumuse arvutamine.
 hind = 12.50
 kogus = 2
 kogumaksumus = hind * kogus
+
+# Tulemuse vormindamine f-sõnega.
 print(f"Raamatud maksavad {kogumaksumus:.2f} eurot.")
+
+# Tulemuse kontrollimine.
 assert kogumaksumus == 25
 ```
 
@@ -18,19 +23,26 @@ Kahe raamatu hind on 25 eurot, nelja raamatu hind 50 eurot. Muutmata lahtri kord
 
 ## I-02
 
-Indeks `0` valib esimese, `-1` viimase elemendi. Lõigu `[:2]` lõppindeks 2 ei kuulu lõiku. Sõnastikust leiad listi võtme järgi.
+Indeks `0` valib esimese, `-1` viimase elemendi. `[:2]` valib kaks esimest elementi: valik algab listi algusest ja lõpeb enne indeksit 2. Sõnastikust leiad listi võtme järgi.
 
 ```python
+# Listi elementide valimine indeksiga.
 temperatuurid = [-3, 2, 5, 1]
 print(temperatuurid[0])
 print(temperatuurid[-1])
+
+# Lõik: kaks esimest elementi eraldi listina.
 print(temperatuurid[:2])
+
+# Sõnastik: kohanimi ja temperatuuride list.
 ilm = {"koht": "Tartu", "temperatuurid": temperatuurid}
 print(ilm)
+
+# Sõnastikust saadud listi pikkuse kontrollimine.
 assert len(ilm["temperatuurid"]) == 4
 ```
 
-Esimene väärtus on −3, viimane 1 ja lõik `[-3, 2]`. `ilm["temperatuurid"]` kasutab sõnastiku võtit; `temperatuurid[0]` listi indeksit.
+Esimene väärtus on −3 ja viimane 1. Kahest esimesest elemendist saad listi `[-3, 2]`. `ilm["temperatuurid"]` kasutab sõnastiku võtit; `temperatuurid[0]` listi indeksit.
 
 ## I-03
 
@@ -52,12 +64,17 @@ Väärtus 49 peab andma „arvestamata”, 50 ja 51 „arvestatud”. Kontrolli 
 Tsüklis lisad summale ainult positiivsed arvud. Summa algväärtus tuleb määrata enne tsüklit, mitte selle sees.
 
 ```python
+# Listi ja summa algväärtuse määramine.
 arvud = [3, -2, 0, 5, -1]
 summa = 0
+
+# Tsükkel ja tingimus: liida summale ainult positiivsed arvud.
 for arv in arvud:
     if arv > 0:
         summa = summa + arv
 print(summa)
+
+# Arvutatud summa kontrollimine.
 assert summa == 8
 ```
 
@@ -68,6 +85,7 @@ Positiivsed liikmed on 3 ja 5. Kui listis on ainult nullid ja negatiivsed arvud,
 Funktsioon peab kasutama parameetrina saadud listi. Tagasta summa pärast tsüklit; tsükli sees olev `return` lõpetaks funktsiooni liiga vara.
 
 ```python
+# Funktsiooni defineerimine ja summa tagastamine.
 def positiivsete_summa(arvud):
     summa = 0
     for arv in arvud:
@@ -75,10 +93,13 @@ def positiivsete_summa(arvud):
             summa = summa + arv
     return summa
 
+# Tulemuse kontrollimine eri sisenditega.
 assert positiivsete_summa([3, -2, 0, 5]) == 8
 assert positiivsete_summa([]) == 0
 assert positiivsete_summa([-4, 0, -1]) == 0
 assert positiivsete_summa([2]) == 2
+
+# Tagastatud väärtuse kasutamine järgmises arvutuses.
 tulemus = positiivsete_summa([3, -2, 0, 5])
 print(tulemus * 2)
 ```
@@ -101,11 +122,14 @@ Vigases näites oli nimi `koguss`, mida polnud loodud. See tekitaks `NameError`-
 3. Lugemiseks peab fail juba olemas olema. Näide loob selle režiimiga `"w"`, mis kirjutab varasema sisu üle. Kogu näite korduskäivitus annab seetõttu sama failisisu.
 
 ```python
+# range: lõppväärtus ei kuulu jadasse.
 print(list(range(1, 5)))
 
+# print ja return: teksti kuvav funktsioon ei tagasta seda teksti.
 def kuva_tervitus():
     print("Tere!")
 
+# Tagastusväärtuse kuvamine ja kontrollimine.
 tulemus = kuva_tervitus()
 print(tulemus)
 assert tulemus is None
@@ -118,6 +142,7 @@ assert tulemus is None
 Ümbermõõt on kaks laiust ja kaks kõrgust. Meetod kasutab objekti atribuute `self.laius` ja `self.korgus`.
 
 ```python
+# Klass: atribuudid ja pindala ning ümbermõõdu meetodid.
 class Ristkulik:
     def __init__(self, laius, korgus):
         self.laius = laius
@@ -129,8 +154,11 @@ class Ristkulik:
     def umbermoot(self):
         return 2 * (self.laius + self.korgus)
 
+# Objekti loomine ja ümbermõõdu meetodi kutsumine.
 kujund = Ristkulik(3, 4)
 print(kujund.umbermoot())
+
+# Tulemuse kontroll ristküliku ja ruuduga.
 assert kujund.umbermoot() == 14
 assert Ristkulik(2, 2).umbermoot() == 8
 ```
