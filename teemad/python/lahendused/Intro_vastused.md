@@ -80,6 +80,8 @@ assert summa == 8
 
 Positiivsed liikmed on 3 ja 5. Kui listis on ainult nullid ja negatiivsed arvud, jääb summa nulliks. Kui lähtestad summa tsükli sees, kaovad varasemate sammude tulemused.
 
+Juhtlausete näites kuvatakse `4`, `5` ja „Lugemine lõppes.”. Kui asendad `break`-lause `continue`-lausega, jääb `STOP` vahele, kuid järgmisel sammul kuvatakse ka `9`. Tsükkel ei lõpe enam märgusõna juures.
+
 ## I-05
 
 Funktsioon peab kasutama parameetrina saadud listi. Tagasta summa pärast tsüklit; tsükli sees olev `return` lõpetaks funktsiooni liiga vara.
@@ -115,11 +117,27 @@ print(kogus * 2)
 
 Vigases näites oli nimi `koguss`, mida polnud loodud. See tekitaks `NameError`-i. Veateate viimaselt realt leiad tundmatu nime ja eelnevatelt ridadelt vea asukoha. Parandatud kood kuvab 6. Kuna omistus on samas lahtris, pole vaja varasemat muutujaseisu.
 
+Loogikavea paljastab üheelemendiline list `[4]` koos piiriga 4. Tingimus `>` jätaks selle ainsa väärtuse välja. Õige võrdlus on `>=`:
+
+```python
+# Õige funktsioon koos piirväärtust kontrolliva näitega.
+def mootmiste_kokkuvote(arvud, alampiir=0):
+    valitud = []
+    for arv in arvud:
+        if arv >= alampiir:
+            valitud.append(arv)
+    return len(valitud), sum(valitud)
+
+assert mootmiste_kokkuvote([4], alampiir=4) == (1, 4)
+```
+
+Kui asendad selles funktsioonis `>=` märgiga `>`, tagastab funktsioon `(0, 0)` ja kontroll tekitab `AssertionError`-i.
+
 ## I-07
 
 1. Õige on **B: 1–4**. `range` jätab lõppväärtuse välja.
 2. Ilma täidetud `return`-lauseta on tagastusväärtus **`None`**. Ekraanile kuvatud tekst ja tagastusväärtus on eri asjad.
-3. Lugemiseks peab fail juba olemas olema. Näide loob selle režiimiga `"w"`, mis kirjutab varasema sisu üle. Kogu näite korduskäivitus annab seetõttu sama failisisu.
+3. Lugemiseks peab fail juba olemas olema. Näide loob selle režiimiga `"w"`, mis kirjutab varasema sisu üle. Kogu näite korduskäivitus annab seetõttu sama failisisu. Ainult `"a"`-režiimiga osa kordamine lisaks samad read veel kord faili lõppu.
 
 ```python
 # range: lõppväärtus ei kuulu jadasse.
@@ -136,6 +154,20 @@ assert tulemus is None
 ```
 
 `is None` kontrollib, kas tulemus on väärtuse puudumist tähistav objekt. Arvude ja sõnede väärtuste võrdlemisel kasuta tavaliselt `==`.
+
+## I-08
+
+Salvesta [näidisskriptist](../naited/mootmiste_kokkuvote.py) oma koopia. Muuda `main()`-is kokkuvõttefunktsiooni väljakutseks `arv, summa = mootmiste_kokkuvote(arvud, alampiir=4)`. Funktsiooni enda vaikeväärtust ega võrdlust pole vaja muuta.
+
+Käivita terminalis `python mootmiste_kokkuvote.py` kaustas, kus asub sisendfaili sisaldav `valjund` kaust. Vaata iga katse järel faili `valjund/kokkuvote.txt`.
+
+| Sisendfail | Arv | Summa | Selgitus |
+| --- | --- | --- | --- |
+| Vihiku näidisfail | 2 | 9.0 | Piirile vastavad 4 ja 5; vigase neljanda rea kohta kuvatakse teade |
+| Tühi fail | 0 | 0 | Lugemistsükkel ei käivitu, kokkuvõte saab tühja listi |
+| Ainult `puudub` | 0 | 0 | Teisendamine annab `ValueError`-i; esimene rida jäetakse koos teatega vahele |
+
+Vigane rida ei muutu nulliks ega lähe mõõtmiste arvu hulka. Tühi rida jäetakse vahele ilma veateateta. Kui soovid katsetada sama sisendit uuesti, taasta näidisfail vihiku faili loomise lahtriga. Skripti `main()` käivitab lugemise, arvutamise ja salvestamise; nende funktsioonide defineerimine üksi töötlust ei käivita.
 
 ## I-L01 — lisamaterjal
 

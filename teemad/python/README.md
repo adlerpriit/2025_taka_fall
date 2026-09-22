@@ -4,7 +4,7 @@ Selle nädala jooksul õpid kirjutama lihtsat Pythoni koodi, töötlema tabeland
 
 | Järjekord | Töövihik | Põhiosa tulemus |
 | --- | --- | --- |
-| 1 | [Pythoni alused](Intro.ipynb) | Muutujad, tingimused, tsükkel, funktsioon ja lihtsa vea parandamine |
+| 1 | [Pythoni alused](Intro.ipynb) | Muutujad, juhtimislaused, funktsioonid, failitöötlus ja väikese skripti käivitamine |
 | 2 | [Tabelandmed Pandasega](Pandas.ipynb) | Andmete kontroll, filtreerimine ja rühmade kokkuvõte |
 | 3 | [Graafikud Seaborniga](Seaborn.ipynb) | Graafiku valimine, kujundamine ja selgitamine |
 
@@ -84,6 +84,8 @@ minu-repo/
       Pandas.ipynb
       Seaborn.ipynb
       requirements.txt
+      naited/
+        mootmiste_kokkuvote.py
       lahendused/
 ```
 
