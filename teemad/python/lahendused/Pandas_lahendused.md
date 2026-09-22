@@ -132,7 +132,7 @@ Suurim keskmine muutus on annusetasemel 3. Iga tabelirida koondab ühe annusetas
 2. `size` loendab kõiki rühma ridu. `count` loendab valitud veeru olemasolevaid väärtusi. Puuduva skooriga rida suurendab esimest, kuid mitte teist arvu.
 3. Sulud rühmitavad kummagi võrdluse. `&` ühendab seejärel kaks tõeväärtusveergu rea kaupa. Ilma sulgudeta võib tehete järjekord anda teistsuguse avaldise või vea; Pythoni `and` ei sobi tervete veergude ühendamiseks.
 
-## P-L1 — lisamaterjal
+## P-L01 — lisamaterjal
 
 Vastavustabelis peab iga kood esinema üks kord. `many_to_one` kontrollib seda tingimust liitmisel. Salvesta ühendatud tabel muutujasse `nimedega`, et `algandmed` jääks muutmata. Kontrolli ka, et ühtegi vastet ei jäänud leidmata.
 
@@ -156,7 +156,7 @@ assert nimedega["malestused"].notna().all()
 
 `.notna()` kontrollib olemasolevaid väärtusi ja `.all()` nõuab, et tingimus kehtiks igal real. Liitmist tasub nii kontrollida ka siis, kui tabel paistab esmapilgul õige.
 
-## P-L2 — lisamaterjal
+## P-L02 — lisamaterjal
 
 Lisa töökoopiasse iga algtabeli rea jaoks kordumatu tunnus `rea_id`. Pane mõlema mõõtmise väärtused veergu `skoor` ja nende algsed veerunimed veergu `mootmine`. Säilita iga mõõtmise juures ka `rea_id` ja mälestuste rühm.
 
@@ -182,7 +182,7 @@ assert not pikk.duplicated(["rea_id", "mootmine"]).any()
 
 Tulemuses on 396 rida. Üks rida tähistab nüüd ühe lähterea üht mõõtmist. Viimane kontroll välistab sama lähterea ja mõõtmise kombinatsiooni kordumise. `Diff` jääb välja, sest see on kahe mõõtmise vahe, mitte kolmas ajahetk.
 
-## P-L3 — lisamaterjal
+## P-L03 — lisamaterjal
 
 Piirid on parempoolselt suletud: 35 kuulub esimesse ja 36 teise rühma. Samal põhimõttel kuuluvad 50 teise ning 65 kolmandasse rühma.
 

@@ -132,7 +132,7 @@ display(pd.DataFrame({"mediaan": mediaanid, "kvartiilivahe": kvartiilivahe}).rou
 
 Ainult keskmiste näitamine peidaks jaotuse laiuse, mediaani asukoha ja äärmuslikumad vaatlused. Kastdiagrammist üksi ei saa teha põhjuslikku järeldust: vaja on arvestada katse korraldust ja muid rühmade erinevusi. Kvartiilide arvutamise lisavõtted ei ole põhiosa ülesande lahendamise eelduseks.
 
-## L-01 — lõpuülesande näide
+## S-04 — lõpuülesande näide
 
 Näidisküsimus: **kuidas erineb skoori muutuse jaotus rõõmsate ja kurbade mälestuste rühmas?** Ravimirühmade küsimuse korral on töövoog sarnane, kuid rühmitamistunnus on `Drug`.
 
@@ -187,7 +187,7 @@ Näidistõlgendus: „Võrdlesin skoori muutust rõõmsate ja kurbade mälestust
 
 **Kontroll:** arvutus ja graafik kasutavad sama töökoopiat. CSV-s on kaks rida ja kolm veergu; sinna ei lisandu tehnilist reaindeksit. Pilt ja tabel salvestatakse kausta `esitus`, mitte näidete ajutisse väljundikausta. Lisa failid oma reposse ning taaskäivita enne töö lõpetamist kernel.
 
-## S-L1 — lisamaterjal
+## S-L01 — lisamaterjal
 
 `col` jagab vaatlused paneelidesse ning `hue` värvib punktid ravimirühma järgi. Telgede ühesugune skaala aitab rühmi võrrelda. `relplot()` loob ise joonise, mistõttu ei kasutata siin `plt.subplots()` ega `ax=` argumenti.
 

@@ -137,7 +137,7 @@ assert tulemus is None
 
 `is None` kontrollib, kas tulemus on väärtuse puudumist tähistav objekt. Arvude ja sõnede väärtuste võrdlemisel kasuta tavaliselt `==`.
 
-## I-L1 — lisamaterjal
+## I-L01 — lisamaterjal
 
 Ümbermõõt on kaks laiust ja kaks kõrgust. Meetod kasutab objekti atribuute `self.laius` ja `self.korgus`.
 

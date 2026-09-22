@@ -143,6 +143,6 @@ Enne töö salvestamist taaskäivita kernel ja käivita kõik lahtrid: JupyterLa
 
 ## Töö salvestamine oma reposse
 
-Salvesta kolm täidetud töövihikut. L-01 vastus jääb Seaborni vihikusse; lisa ka ülesandes salvestatud kokkuvõttetabel ja graafik. Vaata muudatused enne commiti üle käsuga `git status`. Lisa ainult soovitud failid, mitte virtuaalkeskkond või muud ajutised failid.
+Salvesta täidetud töövihikud. S-04 vastus jääb Seaborni vihikusse; lisa ka ülesandes salvestatud kokkuvõttetabel ja graafik. Vaata muudatused enne commiti üle käsuga `git status`. Lisa ainult soovitud failid, mitte virtuaalkeskkond või muud ajutised failid.
 
-Kontrolli, et iga põhiosa harjutuse juures on sinu vastus, lõpuülesanne käivitub ülalt alla ning järeldus vastab tabelile ja graafikule. Tee oma töö kohta arusaadava sõnumiga commit ja saada muudatused oma GitHubi reposse.
+Kontrolli, et lahendatud harjutuste juures on ka vajalikud selgitused, lõpuülesanne käivitub ülalt alla ning järeldus vastab tabelile ja graafikule. Tee oma töö kohta arusaadava sõnumiga commit ja saada muudatused oma GitHubi reposse.
