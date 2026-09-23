@@ -11,8 +11,8 @@ from pathlib import Path
 def loe_mootmised(failitee):
     """Loe arvud tekstifailist; jäta tühjad ja vigased read vahele."""
     arvud = []
-    with failitee.open("r", encoding="utf-8") as tekstifail:
-        for reanumber, rida in enumerate(tekstifail, start=1):
+    with failitee.open("r", encoding="utf-8") as fh:
+        for reanumber, rida in enumerate(fh, start=1):
             tekst = rida.strip()
             # Tühja rea vahelejätmine.
             if tekst == "":
@@ -42,9 +42,9 @@ def main():
     arv, summa = mootmiste_kokkuvote(arvud, alampiir=0)
 
     # Tulemuse kirjutamine uude faili.
-    with Path("valjund/kokkuvote.txt").open("w", encoding="utf-8") as tekstifail:
-        print("Arv:", arv, file=tekstifail)
-        print("Summa:", summa, file=tekstifail)
+    with Path("valjund/kokkuvote.txt").open("w", encoding="utf-8") as fh:
+        print("Arv:", arv, file=fh)
+        print("Summa:", summa, file=fh)
 
 
 if __name__ == "__main__":
